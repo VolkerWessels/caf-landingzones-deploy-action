@@ -1,0 +1,52 @@
+name: 'CAF landing zone deployment'
+description: 'VolkerWessels biased CAF landing zone deployment'
+inputs:
+  action:
+    description: 'CAF terraform action to run. One of (validate, init, plan, apply or destroy)'
+    required: true
+  config_dir:
+    description: 'A directory in `github.workspace` containing config (*.tfvar) files.'
+    required: true
+  environment:
+    description: 'The environment variable used in Azure tags'
+    required: true
+  prefix:
+    description: 'The prefix variable used in Azure naming'
+    required: false
+  landingzone:
+    description: 'the segment (launchpad, solution or add-on) of a cloud environment to deploy'
+    required: true
+  level:
+    description: 'Deploy level'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        echo "GITHUB_ACTION_PATH=${GITHUB_ACTION_PATH}" >> $GITHUB_ENV;\
+        echo "TFVARS_PATH=${{ inputs.config_dir }}" >> $GITHUB_ENV;
+      shell: bash
+    - name: Install make
+      run: |
+        sudo apt-get update && sudo apt-get install -y --no-install-recommends make
+      shell: bash
+    - name: Install landingzones
+      run: make landingzones
+      shell: bash
+      working-directory: ${{ env.GITHUB_ACTION_PATH }}
+      env:
+        TF_LZ_GIT: https://github.com/VolkerWessels/caf-terraform-landingzones.git
+        TF_LZ_BRANCH: 2108.0-modified
+    - name: Azure login with service principal
+      run: make login
+      working-directory: ${{ env.GITHUB_ACTION_PATH }}
+      shell: bash
+    - name: Deploy solution
+      id: solution-deployment
+      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
+      working-directory: ${{ env.GITHUB_ACTION_PATH }}
+      env:
+        PREFIX: ${{ inputs.prefix }}
+        ENVIRONMENT: ${{ inputs.environment }}
+      shell: bash
