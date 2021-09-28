@@ -1,9 +1,14 @@
 name: Landingzones
 
 on:
-  pull_request:
+  push:
     branches:
       - feature/*
+    paths-ignore:
+      - 'README.md'
+  pull_request:
+    branches:
+      - main
     paths-ignore:
       - 'README.md'
   workflow_dispatch:
@@ -22,7 +27,7 @@ jobs:
     environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'non-prd' }} ## For secrets
 
     container:
-      image: ${ ROVER_IMAGE }
+      image: aztfmod/rover:1.0.4-2108.1802
       options: --user 0
 
     strategy:
@@ -55,7 +60,7 @@ jobs:
     continue-on-error: true
 
     container:
-      image:  ${ ROVER_IMAGE }
+      image: aztfmod/rover:1.0.4-2108.1802
       options: --user 0
 
     strategy:
