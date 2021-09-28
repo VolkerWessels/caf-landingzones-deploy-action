@@ -88,7 +88,7 @@ _action:
 	_ADD_ON=$(_ADD_ON)
 	_LEVEL="level$(_LEVEL)"
 	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
-	if [ "$(_ACTION)" == "destroy" ]; then _ACTION="$(_ACTION) -refresh=false -auto-approve"; fi
+	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad '-var random_length=$(RANDOM_LENGTH) -var prefix=$(PREFIX)'"; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON=$(_SOLUTION); fi
 	/bin/bash -c \
 		"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/caf_solution/$$_ADD_ON -a $$_ACTION \
@@ -96,9 +96,7 @@ _action:
 			-level $$_LEVEL \
 			-tfstate $(_TFSTATE).tfstate \
 			-parallelism $(PARALLELISM) \
-			-env $(ENVIRONMENT) \
-			'-var random_length=$(RANDOM_LENGTH)' \
-			'-var prefix=$(PREFIX)'"
+			-env $(ENVIRONMENT)"
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
