@@ -1,0 +1,47 @@
+name: Landingzones
+
+on:
+  pull_request:
+    branches:
+      - main
+      - feature/*
+    paths-ignore:
+      - 'README.md'
+  workflow_dispatch:
+
+env:
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+jobs:
+  landingzones:
+    name:  Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'non-prd' }} ## For secrets
+
+    container:
+      image: aztfmod/rover:1.0.4-2108.1802
+      options: --user 0
+
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        landingzones:
+          - { level: "0", landingzone: "launchpad" }
+          - { level: "1", landingzone: "gitops" }
+        action: ["validate", "plan", "apply"]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        name: Run ${{ matrix.action }}
+        with:
+          action: ${{ matrix.action }}
+          config_dir: ${{ github.workspace }}/.github/workflows/tests/config
+          environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'non-prd' }} ## For azure tags
+          level: ${{ matrix.landingzones.level }}
+          landingzone: ${{ matrix.landingzones.landingzone }}
+          prefix: opco
