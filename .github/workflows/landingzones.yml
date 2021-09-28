@@ -46,6 +46,7 @@ jobs:
           prefix: g${{ github.run_id }}
 
   landingzones_destroy:
+    needs: landingzones
     if: always() # Always try to clean up our mess
     name:  Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
     runs-on: ubuntu-latest
