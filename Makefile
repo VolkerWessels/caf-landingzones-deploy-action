@@ -51,7 +51,7 @@ ENVIRONMENT := $(shell echo $(ENVIRONMENT) | tr '[:upper:]' '[:lower:]')### Envi
 PREFIX:=g$(GITHUB_RUN_ID)
 PREFIX?=$(shell echo $(PREFIX)|tr '[:upper:]' '[:lower:]')### Prefix azure resource naming.
 
-_TF_VAR_workspace:= $(PREFIX)_tfstate
+_TF_VAR_workspace:= $(PREFIX)workspace
 TF_VAR_workspace?= $(_TF_VAR_workspace)### Terraform workspace. Defaults to <PREFIX>_tfstate.
 
 landingzones: ## Install caf-terraform-landingzones
