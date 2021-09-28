@@ -51,8 +51,8 @@ ENVIRONMENT := $(shell echo $(ENVIRONMENT) | tr '[:upper:]' '[:lower:]')### Envi
 PREFIX:=g$(GITHUB_RUN_ID)
 PREFIX?=$(shell echo $(PREFIX)|tr '[:upper:]' '[:lower:]')### Prefix azure resource naming.
 
-_TF_VAR_workspace:= $(PREFIX)workspace
-TF_VAR_workspace?= $(_TF_VAR_workspace)### Terraform workspace. Defaults to <PREFIX>_tfstate.
+_TF_VAR_workspace:= tfstates
+TF_VAR_workspace?=$(_TF_VAR_workspace)### Terraform workspace. Defaults to <PREFIX>_tfstate.
 
 landingzones: ## Install caf-terraform-landingzones
 	@echo -e "${LIGHTGRAY}TFVARS_PATH:		$(TFVARS_PATH)${NC}"
@@ -78,12 +78,17 @@ login: ## Login to azure using a service principal
 formatting: ## Run 'terraform fmt -check --recursive' using rover
 	terraform fmt -check --recursive $(TFVARS_PATH)
 
+_workspace:
+	@echo -e "${GREEN}Create '$(TF_VAR_workspace)' if not exists${NC}"
+	/bin/bash -c \
+		"/tf/rover/rover.sh -env $(ENVIRONMENT) workspace create $(TF_VAR_workspace)"
+
 _action: _ADD_ON = ""
 _action: _TFSTATE = $(shell basename $(_SOLUTION))
 _action: _VAR_FOLDERS= $(shell find $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION) -type d -print0 | xargs -0 -I '{}' sh -c "printf -- '-var-folder %s \ \n' '{}';" )
-_action:
+_action: _workspace
 	@echo -e "${LIGHTGRAY}$$(cd $$(dirname $(TFVARS_PATH)) && pwd)${NC}"
-	@echo -e "${GREEN}Terraform $(_ACTION) for '$(_SOLUTION) level$(_LEVEL)' ${NC}"
+	@echo -e "${GREEN}Terraform $(_ACTION) for '$(_SOLUTION) level$(_LEVEL)'${NC}"
 	_ACTION=$(_ACTION)
 	_ADD_ON=$(_ADD_ON)
 	_LEVEL="level$(_LEVEL)"
