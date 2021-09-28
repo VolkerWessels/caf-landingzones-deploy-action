@@ -3,7 +3,6 @@ name: Landingzones
 on:
   pull_request:
     branches:
-      - main
       - feature/*
     paths-ignore:
       - 'README.md'
@@ -44,4 +43,36 @@ jobs:
           environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'non-prd' }} ## For azure tags
           level: ${{ matrix.landingzones.level }}
           landingzone: ${{ matrix.landingzones.landingzone }}
-          prefix: opco
+          prefix: g${{ github.run_id }}
+
+  landingzones_destroy:
+    if: always() # Always try to clean up our mess
+    name:  Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'non-prd' }} ## For secrets
+    continue-on-error: true
+
+    container:
+      image: aztfmod/rover:1.0.4-2108.1802
+      options: --user 0
+
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix:
+        landingzones:
+          - { level: "1", landingzone: "gitops" }
+          - { level: "0", landingzone: "launchpad" }
+        action: ["destroy"]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        name: Run ${{ matrix.action }}
+        with:
+          action: ${{ matrix.action }}
+          config_dir: ${{ github.workspace }}/.github/workflows/tests/config
+          environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'non-prd' }} ## For azure tags
+          level: ${{ matrix.landingzones.level }}
+          landingzone: ${{ matrix.landingzones.landingzone }}
+          prefix: g${{ github.run_id }}
