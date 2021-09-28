@@ -96,7 +96,9 @@ _action:
 			-level $$_LEVEL \
 			-tfstate $(_TFSTATE).tfstate \
 			-parallelism $(PARALLELISM) \
-			-env $(ENVIRONMENT)"
+			-env $(ENVIRONMENT) \
+			'-var random_length=$(RANDOM_LENGTH)' \
+			'-var prefix=$(PREFIX)'"
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
