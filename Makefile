@@ -70,7 +70,7 @@ landingzones: ## Install caf-terraform-landingzones
 	echo -e "${CYAN}#### ROVER IMAGE VERSION REQUIRED FOR LANDINGZONES: $$(cat $(LANDINGZONES_DIR)/.devcontainer/docker-compose.yml | yq .services.rover.image) ####${NC}"
 
 login: ## Login to azure using a service principal
-	@echo -e "${GREEN}Azure login using serivce principal${NC}"
+	@echo -e "${GREEN}Azure login using service principal${NC}"
 	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p ${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID};
 	if [ ! -z "$${ARM_SUBSCRIPTION_ID}" ]; then \
   		echo -e "${LIGHTGREEN}Subscription set!${NC}";
