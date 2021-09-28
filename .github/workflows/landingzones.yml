@@ -22,7 +22,7 @@ jobs:
     environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'non-prd' }} ## For secrets
 
     container:
-      image: ${{ env.ROVER_IMAGE }}
+      image: ${ ROVER_IMAGE }
       options: --user 0
 
     strategy:
@@ -55,7 +55,7 @@ jobs:
     continue-on-error: true
 
     container:
-      image: ${{ env.ROVER_IMAGE }}
+      image:  ${ ROVER_IMAGE }
       options: --user 0
 
     strategy:
