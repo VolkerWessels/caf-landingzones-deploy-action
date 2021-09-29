@@ -31,6 +31,17 @@ runs:
       run: |
         sudo apt-get update && sudo apt-get install -y --no-install-recommends make
       shell: bash
+    - name: Terraform Cache
+      id: terraform-cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${TF_DATA_DIR}/modules
+          ${TF_DATA_DIR}/plugin-cache
+          ${TF_DATA_DIR}/providers
+        key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+        restore-keys: |
+          ${{ runner.os }}-terraform-
     - name: Install landingzones
       run: make landingzones
       shell: bash
