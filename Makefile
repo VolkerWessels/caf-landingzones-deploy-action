@@ -72,8 +72,8 @@ landingzones: ## Install caf-terraform-landingzones
 login: ## Login to azure using a service principal
 	@echo -e "${GREEN}Azure login using serivce principal${NC}"
 	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p ${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID};
-	if [ -n "$${ARM_SUBSCRIPTION_ID-}" ]; then \
-		az account set -s $$ARM_SUBSCRIPTION_ID; \
+	if [ ! -z "$${ARM_SUBSCRIPTION_ID}" ]; then \
+		az account set --subscription $$ARM_SUBSCRIPTION_ID; \
 	else \
 		echo -e "${ORANGE}No subscription set!${NC}";
 	fi
