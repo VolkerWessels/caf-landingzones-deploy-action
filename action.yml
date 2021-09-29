@@ -70,5 +70,5 @@ runs:
           uses: actions/upload-artifact@v2
           with:
             name: terraform-plan
-            path: ./*.tfplan
+            path: ${GITHUB_WORKSPACE}/*.tfplan
 
