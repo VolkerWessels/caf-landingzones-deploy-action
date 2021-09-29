@@ -38,7 +38,7 @@ runs:
           ${{ runner.os }}-terraform-
     - uses: ./.github/conditional # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
-        if: ${{ input.action == 'apply'}}
+        if: ${{ inputs.action == 'apply'}}
         step: |
           uses: actions/download-artifact@v2
           with:
@@ -65,7 +65,7 @@ runs:
     - name: Store tfplan
       uses: ./.github/conditional # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
-        if: ${{ input.action == 'plan'}}
+        if: ${{ inputs.action == 'plan'}}
         step: |
           uses: actions/upload-artifact@v2
           with:
