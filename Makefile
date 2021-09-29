@@ -48,10 +48,11 @@ LANDINGZONES_DIR?="$(shell dirname $(TFVARS_PATH))/landingzones"### Landingzone 
 
 ENVIRONMENT := $(shell echo $(ENVIRONMENT) | tr '[:upper:]' '[:lower:]')### Environment name to deploy to.
 
-PREFIX:=g$(GITHUB_RUN_ID)
+_PREFIX:=g$(GITHUB_RUN_ID)
+PREFIX?=$(_PREFIX)
 PREFIX?=$(shell echo $(PREFIX)|tr '[:upper:]' '[:lower:]')### Prefix azure resource naming.
 
-_TF_VAR_workspace:= tfstates
+_TF_VAR_workspace:=tfstate
 TF_VAR_workspace?=$(_TF_VAR_workspace)### Terraform workspace. Defaults to <PREFIX>_tfstate.
 
 landingzones: ## Install caf-terraform-landingzones
