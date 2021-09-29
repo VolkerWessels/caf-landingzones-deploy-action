@@ -19,13 +19,14 @@ inputs:
   level:
     description: 'Deploy level'
     required: true
-
+    default: true
 runs:
   using: "composite"
   steps:
     - run: |
         echo "GITHUB_ACTION_PATH=${GITHUB_ACTION_PATH}" >> $GITHUB_ENV;\
         echo "TFVARS_PATH=${{ inputs.config_dir }}" >> $GITHUB_ENV;
+        echo "BASE_PATH=$(dirname ${{ inputs.config_dir }})" >> $GITHUB_ENV;
       shell: bash
     - name: Terraform Cache
       id: terraform-cache
@@ -70,6 +71,6 @@ runs:
           uses: actions/upload-artifact@v2
           with:
             name: terraform-plan
-            path: *.tfplan
+            path: ${BASE_PATH}/*.tfplan
 
 

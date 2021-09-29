@@ -1,16 +1,16 @@
+name: Conditional action
+description: Conditional action
 inputs:
   if:
     description: Your condition
-    required: true
     default: true
+    required: true
   step:
     description: Your step to run if the condition is met
     required: true
 runs:
   using: composite
   steps:
-    - run: pwd && ls -la
-      shell: bash
     - uses: actions/github-script@v4
       with:
         github-token: none
