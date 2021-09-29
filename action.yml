@@ -64,11 +64,13 @@ runs:
       shell: bash
     - name: Store tfplan
       uses: ./.github/conditional # Workaround until possibility to use 'if:' option for action steps of composite actions
+      working-directory: ${GITHUB_WORKSPACE}
       with:
         if: ${{ inputs.action == 'plan'}}
         step: |
           uses: actions/upload-artifact@v2
           with:
             name: terraform-plan
-            path: ${GITHUB_WORKSPACE}/*.tfplan
+            path: *.tfplan
+
 
