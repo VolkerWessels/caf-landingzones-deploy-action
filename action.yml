@@ -72,5 +72,5 @@ runs:
           with:
             name: terraform-plan
             path: ${{ env.BASE_PATH }}/*.tfplan
-            if-no-files-found: fail
+            if-no-files-found: error
 
