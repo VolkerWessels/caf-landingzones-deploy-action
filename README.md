@@ -132,10 +132,10 @@ The action supports the following inputs:
   - `destroy`
   
 - `config_dir` - (required) the directory containing the `*.tfvar(.json)` files.
-- `environment` - (required) the environment you are deploying to, should preferably matcht the environments for secrets
+- `environment` - (required) the environment you are deploying to, should preferably matcht the environments for secrets. Use ${{ github.run_id }} for CI purposes.
 - `landingzone` - (required) the segment (launchpad, solution or add-on) of a cloud environment to deploy.
 - `level` - (required) the landingzone [isolation level](https://github.com/Azure/caf-terraform-landingzones/blob/master/documentation/code_architecture/hierarchy.md)
-- `prefix` - (optional) prefix to prepend as the first characters of the generated name. Defaults to g${{ github.run_id }} for CI purposes.
+- `prefix` - (prefix) prefix to prepend as the first characters of the generated name. Use g${{ github.run_id }} for CI purposes.
 
 
 ## Experimental Status
