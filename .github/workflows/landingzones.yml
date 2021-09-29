@@ -45,7 +45,7 @@ jobs:
         with:
           action: ${{ matrix.action }}
           config_dir: ${{ github.workspace }}/.github/workflows/tests/config
-          environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'non-prd' }} ## For azure tags
+          environment: env-${{ github.run_id }} ## For azure tags
           level: ${{ matrix.landingzones.level }}
           landingzone: ${{ matrix.landingzones.landingzone }}
           prefix: g${{ github.run_id }}
