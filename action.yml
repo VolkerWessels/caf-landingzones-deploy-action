@@ -36,9 +36,13 @@ runs:
         key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
         restore-keys: |
           ${{ runner.os }}-terraform-
-    - uses: actions/download-artifact@v2
+    - uses: ./.github/conditional # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
-        name: terraform-plan
+        if: ${{ input.action == 'apply'}}
+        step: |
+          uses: actions/download-artifact@v2
+          with:
+            name: terraform-plan
     - name: Install landingzones
       run: make landingzones
       shell: bash
@@ -59,9 +63,12 @@ runs:
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
     - name: Store tfplan
-      uses: actions/upload-artifact@v2
+      uses: ./.github/conditional # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
-        name: terraform-plan
-        path: ./*.tfplan
-        if-no-files-found: ignore # Workaround until possibility to use 'if:' option for action steps of composite actions
+        if: ${{ input.action == 'plan'}}
+        step: |
+          uses: actions/upload-artifact@v2
+          with:
+            name: terraform-plan
+            path: ./*.tfplan
 
