@@ -27,21 +27,18 @@ runs:
         echo "GITHUB_ACTION_PATH=${GITHUB_ACTION_PATH}" >> $GITHUB_ENV;\
         echo "TFVARS_PATH=${{ inputs.config_dir }}" >> $GITHUB_ENV;
       shell: bash
-    - name: Install make
-      run: |
-        sudo apt-get update && sudo apt-get install -y --no-install-recommends make
-      shell: bash
     - name: Terraform Cache
       id: terraform-cache
       uses: actions/cache@v2
       with:
         path: |
-          ${TF_DATA_DIR}/modules/*
-          ${TF_DATA_DIR}/plugin-cache
-          ${TF_DATA_DIR}/providers
+          ${TF_PLUGIN_CACHE_DIR}
         key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
         restore-keys: |
           ${{ runner.os }}-terraform-
+    - uses: actions/download-artifact@v2
+      with:
+        name: terraform-plan
     - name: Install landingzones
       run: make landingzones
       shell: bash
@@ -53,7 +50,7 @@ runs:
       run: make login
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
-    - name: Deploy solution
+    - name: Run ${{ inputs.action }}
       id: solution-deployment
       run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
@@ -61,3 +58,10 @@ runs:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
+    - name: Store tfplan
+      uses: actions/upload-artifact@v2
+      with:
+        name: terraform-plan
+        path: ./*.tfplan
+        if-no-files-found: ignore # Workaround until possibility to use 'if:' option for action steps of composite actions
+

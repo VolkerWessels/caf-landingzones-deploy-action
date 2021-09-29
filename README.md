@@ -126,7 +126,6 @@ The action supports the following inputs:
 
 - `action` - (required) one of the following Terraform actions to execute.
   - `validate`
-  - `init`
   - `plan`
   - `apply`
   - `destroy`
