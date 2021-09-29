@@ -22,7 +22,7 @@ jobs:
   landingzones:
     name:  Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
     runs-on: ubuntu-latest
-    environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'non-prd' }} ## For secrets
+    environment: 'non-prd' ## For secrets
 
     container:
       image: aztfmod/rover:1.0.4-2108.1802
@@ -54,7 +54,7 @@ jobs:
     if: always() # Always try to clean up our mess
     name:  Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
     runs-on: ubuntu-latest
-    environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'non-prd' }} ## For secrets
+    environment: 'non-prd' ## For secrets
     continue-on-error: true
 
     container:
