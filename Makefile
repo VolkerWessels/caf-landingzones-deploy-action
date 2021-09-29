@@ -51,8 +51,8 @@ ENVIRONMENT := $(shell echo $(ENVIRONMENT) | tr '[:upper:]' '[:lower:]')### Envi
 PREFIX:=g$(GITHUB_RUN_ID)
 PREFIX?=$(shell echo $(PREFIX)|tr '[:upper:]' '[:lower:]')### Prefix azure resource naming.
 
-_WORKSPACE:= $(PREFIX)_tfstate
-WORKSPACE?= $(_WORKSPACE)### Terraform workspace. Defaults to <PREFIX>_tfstate.
+_TF_VAR_workspace:= tfstates
+TF_VAR_workspace?=$(_TF_VAR_workspace)### Terraform workspace. Defaults to <PREFIX>_tfstate.
 
 landingzones: ## Install caf-terraform-landingzones
 	@echo -e "${LIGHTGRAY}TFVARS_PATH:		$(TFVARS_PATH)${NC}"
@@ -78,25 +78,32 @@ login: ## Login to azure using a service principal
 formatting: ## Run 'terraform fmt -check --recursive' using rover
 	terraform fmt -check --recursive $(TFVARS_PATH)
 
-_action: _ADD_ON = ""
+_workspace:
+	@echo -e "${GREEN}Create '$(TF_VAR_workspace)' if not exists${NC}"
+	/bin/bash -c \
+		"/tf/rover/rover.sh -env $(ENVIRONMENT) workspace create $(TF_VAR_workspace)"
+
+_action: _ADD_ON = "caf_solution/"
 _action: _TFSTATE = $(shell basename $(_SOLUTION))
 _action: _VAR_FOLDERS= $(shell find $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION) -type d -print0 | xargs -0 -I '{}' sh -c "printf -- '-var-folder %s \ \n' '{}';" )
 _action:
 	@echo -e "${LIGHTGRAY}$$(cd $$(dirname $(TFVARS_PATH)) && pwd)${NC}"
-	@echo -e "${GREEN}Terraform $(_ACTION) for '$(_SOLUTION) level$(_LEVEL)' ${NC}"
+	@echo -e "${GREEN}Terraform $(_ACTION) for '$(_SOLUTION) level$(_LEVEL)'${NC}"
 	_ACTION=$(_ACTION)
 	_ADD_ON=$(_ADD_ON)
 	_LEVEL="level$(_LEVEL)"
-	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
-	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad '-var random_length=$(RANDOM_LENGTH) -var prefix=$(PREFIX)'"; fi
-	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON=$(_SOLUTION); fi
+	_VARS=""
+	if [ "$(_LEVEL)" == "0" ]; then _ADD_ON="caf_launchpad" _LEVEL="level0 -launchpad" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
+	if [ "$(_ACTION)" == "destroy" ]; then _ACTION="$(_ACTION) -refresh=false -auto-approve"; fi
+	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$(_SOLUTION)"; fi
 	/bin/bash -c \
-		"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/caf_solution/$$_ADD_ON -a $$_ACTION \
+		"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
 			$(_VAR_FOLDERS) \
 			-level $$_LEVEL \
 			-tfstate $(_TFSTATE).tfstate \
 			-parallelism $(PARALLELISM) \
-			-env $(ENVIRONMENT)"
+			-env $(ENVIRONMENT) \
+			$$_VARS"
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)

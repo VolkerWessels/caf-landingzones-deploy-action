@@ -2,9 +2,7 @@
 Github action for CAF Landingzone deployment
 <p align="left">
   <a href="https://github.com/VolkerWessels/caf-landingzones-deploy-action/actions">
-    <img alt="Continuous Integration" src="https://github.com/VolkerWessels/caf-landingzones-deploy-action/workflows/Continuous%20Integration/badge.svg" /></a>
-  <a href="https://github.com/VolkerWessels/caf-landingzones-deploy-action/actions">
-    <img alt="Setup Terraform" src="https://github.com/VolkerWessels/caf-landingzones-deploy-action/workflows/Setup%20Terraform/badge.svg" /></a>
+    <img alt="Continuous Integration" src="https://github.com/VolkerWessels/caf-landingzones-deploy-action/workflows/Landingzones/badge.svg" /></a>
 </p>
 
 The ` VolkerWessels/caf-landingzones-deploy-action` action is a 'composite' action that sets up deployments for CAF landing zones by:
