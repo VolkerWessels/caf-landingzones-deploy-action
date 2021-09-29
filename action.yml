@@ -12,7 +12,7 @@ inputs:
     required: true
   prefix:
     description: 'The prefix variable used in Azure naming'
-    required: false
+    required: true
   landingzone:
     description: 'the segment (launchpad, solution or add-on) of a cloud environment to deploy'
     required: true
@@ -36,7 +36,7 @@ runs:
       uses: actions/cache@v2
       with:
         path: |
-          ${TF_DATA_DIR}/modules
+          ${TF_DATA_DIR}/modules/*
           ${TF_DATA_DIR}/plugin-cache
           ${TF_DATA_DIR}/providers
         key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
