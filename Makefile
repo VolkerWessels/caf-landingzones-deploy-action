@@ -83,7 +83,7 @@ _workspace:
 	/bin/bash -c \
 		"/tf/rover/rover.sh -env $(ENVIRONMENT) workspace create $(TF_VAR_workspace)"
 
-_action: _ADD_ON = ""
+_action: _ADD_ON = "caf_solution/"
 _action: _TFSTATE = $(shell basename $(_SOLUTION))
 _action: _VAR_FOLDERS= $(shell find $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION) -type d -print0 | xargs -0 -I '{}' sh -c "printf -- '-var-folder %s \ \n' '{}';" )
 _action: _workspace
