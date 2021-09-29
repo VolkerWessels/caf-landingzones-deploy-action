@@ -41,10 +41,13 @@ info: ## Information about ENVIRONMENT variables and how to use them.
 PARALLELISM?='30'### Limit the number of concurrent operation as Terraform walks the graph. Defaults to 30.
 RANDOM_LENGTH?='5'### Random string length for azure resource naming. Defaults to 5
 
+
+
 _TFVARS_PATH:=/tf/caf/configuration
 TFVARS_PATH?=$(_TFVARS_PATH)
+_BASE_DIR = $(shell dirname $(TFVARS_PATH))
 
-LANDINGZONES_DIR?="$(shell dirname $(TFVARS_PATH))/landingzones"### Landingzone directory checkout dir. Defaults to 'landingzones/'
+LANDINGZONES_DIR?="$(_BASE_DIR)/landingzones"### Landingzone directory checkout dir. Defaults to 'landingzones/'
 
 ENVIRONMENT := $(shell echo $(ENVIRONMENT) | tr '[:upper:]' '[:lower:]')### Environment name to deploy to.
 
@@ -69,12 +72,17 @@ landingzones: ## Install caf-terraform-landingzones
 login: ## Login to azure using a service principal
 	@echo -e "${GREEN}Azure login using serivce principal${NC}"
 	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p ${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID};
-	if [ -n "$${ARM_SUBSCRIPTION_ID-}" ]; then \
-		az account set -s $$ARM_SUBSCRIPTION_ID; \
+	if [ ! -z "$${ARM_SUBSCRIPTION_ID}" ]; then \
+  		echo -e "${LIGHTGREEN}Subscription set!${NC}";
+		az account set --subscription $$ARM_SUBSCRIPTION_ID; \
 	else \
 		echo -e "${ORANGE}No subscription set!${NC}";
 	fi
 	@echo -e "${GREEN}Logged in to $$(az account show --query 'name')${NC}"; \
+
+logout: ## Logout service principal
+	@echo -e "${GREEN}Logout service principal${NC}"
+	az logout
 
 formatting: ## Run 'terraform fmt -check --recursive' using rover
 	terraform fmt -check --recursive $(TFVARS_PATH)
@@ -88,13 +96,14 @@ _action: _ADD_ON = "caf_solution/"
 _action: _TFSTATE = $(shell basename $(_SOLUTION))
 _action: _VAR_FOLDERS= $(shell find $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION) -type d -print0 | xargs -0 -I '{}' sh -c "printf -- '-var-folder %s \ \n' '{}';" )
 _action:
-	@echo -e "${LIGHTGRAY}$$(cd $$(dirname $(TFVARS_PATH)) && pwd)${NC}"
+	@echo -e "${LIGHTGRAY}$$(cd $(_BASE_DIR) && pwd)${NC}"
 	@echo -e "${GREEN}Terraform $(_ACTION) for '$(_SOLUTION) level$(_LEVEL)'${NC}"
 	_ACTION=$(_ACTION)
 	_ADD_ON=$(_ADD_ON)
 	_LEVEL="level$(_LEVEL)"
 	_VARS=""
 	if [ "$(_LEVEL)" == "0" ]; then _ADD_ON="caf_launchpad" _LEVEL="level0 -launchpad" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
+	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $(_BASE_DIR)/$(PREFIX).tfplan"; fi
 	if [ "$(_ACTION)" == "destroy" ]; then _ACTION="$(_ACTION) -refresh=false -auto-approve"; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$(_SOLUTION)"; fi
 	/bin/bash -c \
