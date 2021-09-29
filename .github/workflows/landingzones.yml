@@ -16,7 +16,6 @@ env:
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-  TF_VAR_workspace: testactionworkspace
   ROVER_IMAGE: aztfmod/rover:1.0.4-2108.1802
 
 jobs:
@@ -45,7 +44,7 @@ jobs:
         with:
           action: ${{ matrix.action }}
           config_dir: ${{ github.workspace }}/.github/workflows/tests/config
-          environment: env-${{ github.run_id }} ## For azure tags
+          environment: ${{ github.run_id }} ## For azure tags
           level: ${{ matrix.landingzones.level }}
           landingzone: ${{ matrix.landingzones.landingzone }}
           prefix: g${{ github.run_id }}
@@ -78,7 +77,7 @@ jobs:
         with:
           action: ${{ matrix.action }}
           config_dir: ${{ github.workspace }}/.github/workflows/tests/config
-          environment: env-${{ github.run_id }} ## For azure tags
+          environment: ${{ github.run_id }} ## For azure tags
           level: ${{ matrix.landingzones.level }}
           landingzone: ${{ matrix.landingzones.landingzone }}
           prefix: g${{ github.run_id }}
