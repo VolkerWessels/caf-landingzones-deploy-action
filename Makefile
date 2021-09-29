@@ -73,11 +73,16 @@ login: ## Login to azure using a service principal
 	@echo -e "${GREEN}Azure login using serivce principal${NC}"
 	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p ${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID};
 	if [ ! -z "$${ARM_SUBSCRIPTION_ID}" ]; then \
+  		echo -e "${LIGHTGREEN}Subscription set!${NC}";
 		az account set --subscription $$ARM_SUBSCRIPTION_ID; \
 	else \
 		echo -e "${ORANGE}No subscription set!${NC}";
 	fi
 	@echo -e "${GREEN}Logged in to $$(az account show --query 'name')${NC}"; \
+
+logout: ## Logout service principal
+	@echo -e "${GREEN}Logout service principal${NC}"
+	az logout
 
 formatting: ## Run 'terraform fmt -check --recursive' using rover
 	terraform fmt -check --recursive $(TFVARS_PATH)

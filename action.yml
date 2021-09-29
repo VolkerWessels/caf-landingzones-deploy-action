@@ -63,6 +63,10 @@ runs:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
+    - name: Logout service principal
+      run: make logout
+      working-directory: ${{ env.GITHUB_ACTION_PATH }}
+      shell: bash
     - name: Store tfplan
       uses: ./.github/conditional # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
