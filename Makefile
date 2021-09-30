@@ -99,11 +99,12 @@ _action:
 	@echo -e "${LIGHTGRAY}$$(cd $(_BASE_DIR) && pwd)${NC}"
 	@echo -e "${GREEN}Terraform $(_ACTION) for '$(_SOLUTION) level$(_LEVEL)'${NC}"
 	_ACTION=$(_ACTION)
+	_PLAN="$(_BASE_DIR)/$(PREFIX)-$(_SOLUTION).tfplan"
 	_ADD_ON=$(_ADD_ON)
 	_LEVEL="level$(_LEVEL)"
 	_VARS=""
 	if [ "$(_LEVEL)" == "0" ]; then _ADD_ON="caf_launchpad" _LEVEL="level0 -launchpad" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
-	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $(_BASE_DIR)/$(PREFIX)-$(_SOLUTION).tfplan"; fi
+	if [ ! "$(_ACTION)" == "validate" ] && [ -a "$(_PLAN)" ]; then _ACTION="$(_ACTION) --plan $(_PLAN)"; fi
 	if [ "$(_ACTION)" == "destroy" ]; then _ACTION="$(_ACTION) -refresh=false -auto-approve"; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$(_SOLUTION)"; fi
 	/bin/bash -c \

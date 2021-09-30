@@ -68,7 +68,7 @@ jobs:
         landingzones:
           - { level: "1", landingzone: "gitops" }
           - { level: "0", landingzone: "launchpad" }
-        action: ["destroy"]
+        action: ["plan","destroy"]
 
     steps:
       - uses: actions/checkout@v2
