@@ -34,8 +34,7 @@ jobs:
       matrix:
         landingzones:
           - { level: "0", landingzone: "launchpad" }
-          - { level: "1", landingzone: "gitops" }
-        action: ["plan", "apply"]
+        action: ["plan", "show", "apply"]
 
     steps:
       - uses: actions/checkout@v2
