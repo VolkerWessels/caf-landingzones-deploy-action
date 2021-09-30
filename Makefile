@@ -62,18 +62,18 @@ landingzones: ## Install caf-terraform-landingzones
 	@echo -e "${LIGHTGRAY}TFVARS_PATH:		$(TFVARS_PATH)${NC}"
 	@echo -e "${LIGHTGRAY}LANDINGZONES_DIR:	$(LANDINGZONES_DIR)${NC}"
 	if [ ! -d \"$(LANDINGZONES_DIR)\" ]; then \
-  		echo -e "${GREEN}Installing landingzones (version : $(TF_LZ_BRANCH))${NC}"; \
-  		git clone --branch $(TF_LZ_BRANCH) $(TF_LZ_GIT) $(LANDINGZONES_DIR); \
-  		echo -e "${GREEN}Creating symlink for .devcontainer.$$(cd /tf/caf/ && ln -s $(LANDINGZONES_DIR)/.devcontainer .devcontainer)${NC}" ;\
-  	fi
+		echo -e "${GREEN}Installing landingzones (version : $(TF_LZ_BRANCH))${NC}"; \
+		git clone --branch $(TF_LZ_BRANCH) $(TF_LZ_GIT) $(LANDINGZONES_DIR); \
+		echo -e "${GREEN}Creating symlink for .devcontainer.$$(cd /tf/caf/ && ln -s $(LANDINGZONES_DIR)/.devcontainer .devcontainer)${NC}" ;\
+	fi
 	echo -e "${GREEN}Landingzones installed (version: $$(cd $(LANDINGZONES_DIR) && git branch --show-current))${NC}"
 	echo -e "${CYAN}#### ROVER IMAGE VERSION REQUIRED FOR LANDINGZONES: $$(cat $(LANDINGZONES_DIR)/.devcontainer/docker-compose.yml | yq .services.rover.image) ####${NC}"
 
 login: ## Login to azure using a service principal
-	@echo -e "${GREEN}Azure login using serivce principal${NC}"
+	@echo -e "${GREEN}Azure login using service principal${NC}"
 	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p ${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID};
 	if [ ! -z "$${ARM_SUBSCRIPTION_ID}" ]; then \
-  		echo -e "${LIGHTGREEN}Subscription set!${NC}";
+		echo -e "${LIGHTGREEN}Subscription set!${NC}";
 		az account set --subscription $$ARM_SUBSCRIPTION_ID; \
 	else \
 		echo -e "${ORANGE}No subscription set!${NC}";
@@ -139,3 +139,8 @@ destroy: _ACTION=destroy
 destroy: _LEVEL=$(LEVEL)
 destroy: _SOLUTION=$(SOLUTION)
 destroy: _action ## Run `terraform destroy` using rover. Usage example: make destroy SOLUTION=application LEVEL=4
+
+show: _ACTION=show
+show: _LEVEL=$(LEVEL)
+show: _SOLUTION=$(SOLUTION)
+show: _action ## Run `terraform show` using rover. Usage example: make show SOLUTION=application LEVEL=4
