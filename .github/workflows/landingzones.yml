@@ -1,10 +1,11 @@
 name: Landingzones
 
-on: [push, pull_request]
-  branches:
-    - feature/*
-  paths-ignore:
-    - 'README.md'
+on:
+  push:
+    branches:
+      - feature/*
+    paths-ignore:
+      - 'README.md'
   workflow_dispatch:
 
 env:
