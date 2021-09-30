@@ -76,7 +76,7 @@ login: ## Login to azure using a service principal
   		echo -e "${LIGHTGREEN}Subscription set!${NC}";
 		az account set --subscription $$ARM_SUBSCRIPTION_ID; \
 	else \
-		echo -e "${ORANGE}No subscription set!${NC}";
+		echo -e "${RED}No subscription set!${NC}"; exit 1;
 	fi
 	@echo -e "${GREEN}Logged in to $$(az account show --query 'name')${NC}"; \
 
@@ -103,14 +103,17 @@ _action:
 	_LEVEL="level$(_LEVEL)"
 	_VARS=""
 	if [ "$(_LEVEL)" == "0" ]; then _ADD_ON="caf_launchpad" _LEVEL="level0 -launchpad" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
-	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $(_BASE_DIR)/$(PREFIX).tfplan"; fi
+	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $(_BASE_DIR)/$(PREFIX)-$(_SOLUTION).tfplan"; fi
 	if [ "$(_ACTION)" == "destroy" ]; then _ACTION="$(_ACTION) -refresh=false -auto-approve"; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$(_SOLUTION)"; fi
 	/bin/bash -c \
 		"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
+			-tfstate_subscription_id $$ARM_SUBSCRIPTION_ID \
+			-target_subscription $$ARM_SUBSCRIPTION_ID \
 			$(_VAR_FOLDERS) \
 			-level $$_LEVEL \
 			-tfstate $(_TFSTATE).tfstate \
+			-log-severity ERROR \
 			-parallelism $(PARALLELISM) \
 			-env $(ENVIRONMENT) \
 			$$_VARS"

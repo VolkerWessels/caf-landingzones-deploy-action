@@ -39,11 +39,11 @@ runs:
           ${{ runner.os }}-terraform-
     - uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
-        if: ${{ inputs.action == 'apply'}}
+        if: ${{ inputs.action == 'apply' || inputs.action == 'destroy' }}
         step: |
           uses: actions/download-artifact@v2
           with:
-            name: terraform-plan
+            name: terraform-${{ inputs.landingzone }}-plan
     - name: Install landingzones
       run: make landingzones
       shell: bash
@@ -74,7 +74,7 @@ runs:
         step: |
           uses: actions/upload-artifact@v2
           with:
-            name: terraform-plan
+            name: terraform-${{ inputs.landingzone }}-plan
             path: ${{ env.BASE_PATH }}/*.tfplan
             if-no-files-found: error
 
