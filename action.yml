@@ -2,7 +2,7 @@ name: 'CAF landing zone deployment'
 description: 'VolkerWessels biased CAF landing zone deployment'
 inputs:
   action:
-    description: 'CAF terraform action to run. One of (validate, init, plan, apply or destroy)'
+    description: 'CAF terraform action to run. One of (validate, init, plan, apply, show or destroy)'
     required: true
   config_dir:
     description: 'A directory in `github.workspace` containing config (*.tfvar) files.'
