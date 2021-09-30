@@ -41,11 +41,9 @@ info: ## Information about ENVIRONMENT variables and how to use them.
 PARALLELISM?='30'### Limit the number of concurrent operation as Terraform walks the graph. Defaults to 30.
 RANDOM_LENGTH?='5'### Random string length for azure resource naming. Defaults to 5
 
-
-
 _TFVARS_PATH:=/tf/caf/configuration
 TFVARS_PATH?=$(_TFVARS_PATH)
-_BASE_DIR = $(shell dirname $(TFVARS_PATH))
+_BASE_DIR:=$(shell dirname $(TFVARS_PATH))
 
 LANDINGZONES_DIR?="$(_BASE_DIR)/landingzones"### Landingzone directory checkout dir. Defaults to 'landingzones/'
 
@@ -104,7 +102,7 @@ _action:
 	_LEVEL="level$(_LEVEL)"
 	_VARS=""
 	if [ "$(_LEVEL)" == "0" ]; then _ADD_ON="caf_launchpad" _LEVEL="level0 -launchpad" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
-	if [ ! "$(_ACTION)" == "validate" ] && [ -a "$(_PLAN)" ]; then _ACTION="$(_ACTION) --plan $(_PLAN)"; fi
+	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $(_PLAN)"; fi
 	if [ "$(_ACTION)" == "destroy" ]; then _ACTION="$(_ACTION) -refresh=false -auto-approve"; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$(_SOLUTION)"; fi
 	/bin/bash -c \
