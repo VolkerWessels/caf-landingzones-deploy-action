@@ -65,7 +65,6 @@ jobs:
       max-parallel: 1
       matrix:
         landingzones:
-          - { level: "1", landingzone: "gitops" }
           - { level: "0", landingzone: "launchpad" }
         action: ["destroy"]
 
