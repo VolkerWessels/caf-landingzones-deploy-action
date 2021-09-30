@@ -37,7 +37,7 @@ runs:
         key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
         restore-keys: |
           ${{ runner.os }}-terraform-
-    - uses: ./.github/conditional # Workaround until possibility to use 'if:' option for action steps of composite actions
+    - uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
         if: ${{ inputs.action == 'apply'}}
         step: |
@@ -68,7 +68,7 @@ runs:
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Store tfplan
-      uses: ./.github/conditional # Workaround until possibility to use 'if:' option for action steps of composite actions
+      uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
         if: ${{ inputs.action == 'plan'}}
         step: |
