@@ -24,7 +24,7 @@ runs:
   using: "composite"
   steps:
     - run: |
-        echo "GITHUB_ACTION_PATH=${GITHUB_ACTION_PATH}" >> $GITHUB_ENV;\
+        echo "GITHUB_ACTION_PATH=${GITHUB_ACTION_PATH}" >> $GITHUB_ENV;
         echo "TFVARS_PATH=${{ inputs.config_dir }}" >> $GITHUB_ENV;
         echo "BASE_PATH=$(dirname ${{ inputs.config_dir }})" >> $GITHUB_ENV;
       shell: bash
