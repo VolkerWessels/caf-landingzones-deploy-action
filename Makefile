@@ -116,8 +116,6 @@ _action:
 _terraform:
 	@echo -e "${LIGHTGRAY}$$(cd $(_BASE_DIR) && pwd)${NC}"
 	@echo -e "${GREEN}Terraform $(_ACTION) for '$(_SOLUTION) level$(_LEVEL)'${NC}"
-	_ACTION=$(_ACTION)
-	if [ "$(_ACTION)" == "show" ]; then "terraform show" ; fi
 	/bin/bash -c \
 		"terraform show \
 		-chdir=$(LANDINGZONES_DIR) \
