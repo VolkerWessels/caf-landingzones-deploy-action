@@ -41,8 +41,6 @@ info: ## Information about ENVIRONMENT variables and how to use them.
 PARALLELISM?='30'### Limit the number of concurrent operation as Terraform walks the graph. Defaults to 30.
 RANDOM_LENGTH?='5'### Random string length for azure resource naming. Defaults to 5
 
-
-
 _TFVARS_PATH:=/tf/caf/configuration
 TFVARS_PATH?=$(_TFVARS_PATH)
 _BASE_DIR = $(shell dirname $(TFVARS_PATH))
