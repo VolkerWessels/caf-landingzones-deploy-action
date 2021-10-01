@@ -104,19 +104,17 @@ _action:
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $(_BASE_DIR)/$(PREFIX).tfplan"; fi
 	if [ "$(_ACTION)" == "destroy" ]; then _ACTION="$(_ACTION) -refresh=false -auto-approve"; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$(_SOLUTION)"; fi
-	if [ "$(ACTION)" != "show" ]; then \
-		/bin/bash -c \
-			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
-				$(_VAR_FOLDERS) \
-				-level $$_LEVEL \
-				-tfstate $(_TFSTATE).tfstate \
-				-parallelism $(PARALLELISM) \
-				-env $(ENVIRONMENT) \
-				$$_VARS" ; \
+	if [ "$(ACTION)" != "show" ]; then /bin/bash -c \
+		"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
+			$(_VAR_FOLDERS) \
+			-level $$_LEVEL \
+			-tfstate $(_TFSTATE).tfstate \
+			-parallelism $(PARALLELISM) \
+			-env $(ENVIRONMENT) \
+			$$_VARS" ; \
 	fi
-	if [ "$(ACTION)" == "show" ]; then \
-		/bin/bash -c \
-			"terraform $$_ACTION \
+	if [ "$(ACTION)" == "show" ]; then /bin/bash -c \
+		"terraform $$_ACTION \
 			-chdir=$(LANDINGZONES_DIR) \
 			-state=$(_TFSTATE).tfstate" ; \
 	fi
