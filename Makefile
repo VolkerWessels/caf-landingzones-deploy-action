@@ -114,7 +114,7 @@ _action:
 			$$_VARS" ; \
 	fi
 	if [ "$(_ACTION)" == "show" ]; then /bin/bash -c \
-		"terraform show $(_TFSTATE).tfstate"
+		"terraform show $(LANDINGZONES_DIR)/$$_ADD_ON/$(_TFSTATE).tfstate"
 	fi
 
 validate: _ACTION=validate
