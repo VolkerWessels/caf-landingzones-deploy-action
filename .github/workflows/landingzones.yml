@@ -43,7 +43,7 @@ jobs:
         name: Run ${{ matrix.action }}
         with:
           action: ${{ matrix.action }}
-          config_dir: ${{ github.workspace }}/.github/workflows/tests/config
+          config_dir: ${{ github.workspace }}/.github/tests/config
           environment: ${{ github.run_id }} ## For azure tags
           level: ${{ matrix.landingzones.level }}
           landingzone: ${{ matrix.landingzones.landingzone }}
@@ -76,7 +76,7 @@ jobs:
         name: Run ${{ matrix.action }}
         with:
           action: ${{ matrix.action }}
-          config_dir: ${{ github.workspace }}/.github/workflows/tests/config
+          config_dir: ${{ github.workspace }}/.github/tests/config
           environment: ${{ github.run_id }} ## For azure tags
           level: ${{ matrix.landingzones.level }}
           landingzone: ${{ matrix.landingzones.landingzone }}

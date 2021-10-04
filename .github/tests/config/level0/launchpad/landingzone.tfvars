@@ -30,7 +30,6 @@ launchpad_key_names = {
   keyvault_client_secret = "aadapp-caf-launchpad-level0"
   tfstates = [
     "level0",
-    "level1",
   ]
 }
 
@@ -120,6 +119,7 @@ keyvaults = {
     soft_delete_enabled = true
     tags = {
       tfstate     = "level0"
+      environment = "action"
     }
 
     creation_policies = {
@@ -139,6 +139,7 @@ keyvaults = {
     soft_delete_enabled = true
     tags = {
       tfstate     = "level1"
+      environment = "action"
     }
 
     creation_policies = {
@@ -162,6 +163,8 @@ storage_accounts = {
       ## Those tags must never be changed after being set as they are used by the rover to locate the launchpad and the tfstates.
       # Only adjust the environment value at creation time
       tfstate     = "level0"
+      environment = "action"
+      launchpad   = "launchpad"
       ##
     }
     blob_properties          = {
@@ -186,6 +189,8 @@ storage_accounts = {
     tags                     = {
       # Those tags must never be changed while set as they are used by the rover to locate the launchpad and the tfstates.
       tfstate     = "level1"
+      environment = "action"
+      launchpad   = "launchpad"
     }
     blob_properties          = {
       versioning_enabled                = true
