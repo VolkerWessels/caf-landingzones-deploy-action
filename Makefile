@@ -56,6 +56,8 @@ PREFIX?=$(shell echo $(PREFIX)|tr '[:upper:]' '[:lower:]')### Prefix azure resou
 _TF_VAR_workspace:=tfstate
 TF_VAR_workspace?=$(_TF_VAR_workspace)### Terraform workspace. Defaults to <PREFIX>_tfstate.
 
+TF_VAR_tfstate_subscription_id:=$(ARM_SUBSCRIPTION_ID)
+
 landingzones: ## Install caf-terraform-landingzones
 	@echo -e "${LIGHTGRAY}TFVARS_PATH:		$(TFVARS_PATH)${NC}"
 	@echo -e "${LIGHTGRAY}LANDINGZONES_DIR:	$(LANDINGZONES_DIR)${NC}"
@@ -80,7 +82,14 @@ login: ## Login to azure using a service principal
 
 logout: ## Logout service principal
 	@echo -e "${GREEN}Logout service principal${NC}"
-	az logout
+	az logout || true
+	# Cleaup any service principal session
+	unset ARM_TENANT_ID
+	unset ARM_SUBSCRIPTION_ID
+	unset ARM_CLIENT_ID
+	unset ARM_CLIENT_SECRET
+
+	@echo -e "${GREEN}Azure session closed${NC}"
 
 formatting: ## Run 'terraform fmt -check --recursive' using rover
 	terraform fmt -check --recursive $(TFVARS_PATH)
