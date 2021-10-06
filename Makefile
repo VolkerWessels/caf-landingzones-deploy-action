@@ -126,6 +126,12 @@ _action:
 			-env $(ENVIRONMENT) \
 			$$_VARS"
 
+tags: _TAGS=$(TAGS)
+tags: _LEVEL=$(LEVEL)
+tags: _SOLUTION=$(SOLUTION)
+tags:
+	echo '{"Level": "$(LEVEL)", "Solution": "$(SOLUTION)"} $(TAGS)' | jq -s add
+
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
 validate: _SOLUTION=$(SOLUTION)

@@ -21,9 +21,8 @@ inputs:
     required: true
     default: true
   tags:
-    description: 'tags'
-    required: false
-
+    description: 'Json string of tags to import'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -63,6 +62,19 @@ runs:
       run: make login
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
+    - name: Run jq command to create tags file
+      run: make tags TAGS=${{ input.tags }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
+      shell: bash
+    - name: Variable substitution in tags.tfvars.json
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: '${{ github.workspace }}/configuration/SSC/tags.tfvars.json'
+      env:
+        tags.OpCo: ${{fromJSON(tags.OpCo)}}
+        tags.OpsTeam: ${{fromJSON(tags.OpsTeam)}}
+        tags.Owner: ${{fromJSON(tags.Owner)}}
+        tags.Approver: ${{fromJSON(tags.Approver)}}
+        tags.BusinessOwner: ${{fromJSON(tags.BusinessOwner}}
     - name: Run ${{ inputs.action }}
       id: solution-deployment
       run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
