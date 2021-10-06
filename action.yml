@@ -59,7 +59,7 @@ runs:
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Run jq command to create tags file
-      run: make tags TAGS=${{ input.tags }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
+      run: make tags TAGS=${{ inputs.tags }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
       shell: bash
     - name: Run ${{ inputs.action }}
       id: solution-deployment
