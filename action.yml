@@ -47,10 +47,6 @@ runs:
           uses: actions/download-artifact@v2
           with:
             name: terraform-${{ inputs.landingzone }}-plan
-    - name: tags
-      run: |
-        ${{ toJSON(inputs.tags) }}) >> tags.tfvars.json && cat tags.tfvars.json
-      shell: bash
     - name: Install landingzones
       run: make landingzones
       shell: bash
@@ -65,16 +61,6 @@ runs:
     - name: Run jq command to create tags file
       run: make tags TAGS=${{ input.tags }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
       shell: bash
-    - name: Variable substitution in tags.tfvars.json
-      uses: microsoft/variable-substitution@v1
-      with:
-        files: '${{ github.workspace }}/configuration/SSC/tags.tfvars.json'
-      env:
-        tags.OpCo: ${{fromJSON(tags.OpCo)}}
-        tags.OpsTeam: ${{fromJSON(tags.OpsTeam)}}
-        tags.Owner: ${{fromJSON(tags.Owner)}}
-        tags.Approver: ${{fromJSON(tags.Approver)}}
-        tags.BusinessOwner: ${{fromJSON(tags.BusinessOwner}}
     - name: Run ${{ inputs.action }}
       id: solution-deployment
       run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
