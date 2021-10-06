@@ -17,7 +17,7 @@ env:
 
 jobs:
   landingzones:
-    name:  Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
+    name: Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
     runs-on: ubuntu-latest
     environment: 'non-prd' ## For secrets
 
@@ -48,8 +48,8 @@ jobs:
 
   landingzones_destroy:
     needs: landingzones
-    if: always() # Always try to clean up our mess
-    name:  Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
+    if: always() # Always clean up our mess
+    name: Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
     runs-on: ubuntu-latest
     environment: 'non-prd' ## For secrets
     continue-on-error: true
@@ -65,16 +65,13 @@ jobs:
         landingzones:
           - { level: "0", landingzone: "launchpad" }
           - { level: "1", landingzone: "gitops" }
-        action: ["destroy"]
 
     steps:
       - uses: actions/checkout@v2
-      - uses: ./
-        name: Run ${{ matrix.action }}
+      - name: Run 'destroy' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
+        uses: VolkerWessels/caf-landingzones-destroy-action@v1
         with:
-          action: ${{ matrix.action }}
-          config_dir: ${{ github.workspace }}/.github/workflows/tests/config
-          environment: ${{ github.run_id }} ## For azure tags
-          level: ${{ matrix.landingzones.level }}
+          config_dir: ${{ github.workspace }}/configuration/SSC
           landingzone: ${{ matrix.landingzones.landingzone }}
+          level: ${{ matrix.landingzones.level }}
           prefix: g${{ github.run_id }}
