@@ -114,7 +114,7 @@ _action:
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "destroy" ]; then _ACTION="$(_ACTION) -refresh=false -auto-approve"; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$(_SOLUTION)"; fi
-	/bin/bash -c \
+	if [ "$(_ACTION)" != "show" ]; then /bin/bash -c \
 		"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
 			-tfstate_subscription_id $$ARM_SUBSCRIPTION_ID \
 			-target_subscription $$ARM_SUBSCRIPTION_ID \
@@ -124,7 +124,11 @@ _action:
 			-log-severity ERROR \
 			-parallelism $(PARALLELISM) \
 			-env $(ENVIRONMENT) \
-			$$_VARS"
+			$$_VARS" ; \
+	fi
+	if [ "$(_ACTION)" == "show" ]; then /bin/bash -c \
+		"terraform show $(LANDINGZONES_DIR)/$$_ADD_ON/$(_TFSTATE).tfstate"
+	fi
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
@@ -154,4 +158,4 @@ destroy: _action ## Run `terraform destroy` using rover. Usage example: make des
 show: _ACTION=show
 show: _LEVEL=$(LEVEL)
 show: _SOLUTION=$(SOLUTION)
-show: _action ## Run `terraform show` using rover. Usage example: make show SOLUTION=application LEVEL=4
+show: _action ## Run `terraform show` using rover.
