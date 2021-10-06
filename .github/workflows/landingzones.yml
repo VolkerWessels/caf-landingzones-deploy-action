@@ -63,7 +63,6 @@ jobs:
   landingzones_destroy:
     needs: landingzones
     if: always() # Always clean up our mess
-    name: Run destroy on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
     runs-on: ubuntu-latest
     environment: 'non-prd' ## For secrets
     continue-on-error: true
