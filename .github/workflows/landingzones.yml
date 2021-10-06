@@ -30,7 +30,6 @@ env:
 
 jobs:
   landingzones:
-    name:  Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
     name: Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
     runs-on: ubuntu-latest
     environment: 'non-prd' ## For secrets
