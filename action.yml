@@ -20,6 +20,10 @@ inputs:
     description: 'Deploy level'
     required: true
     default: true
+  tags:
+    description: 'tags'
+    required: false
+
 runs:
   using: "composite"
   steps:
@@ -44,6 +48,10 @@ runs:
           uses: actions/download-artifact@v2
           with:
             name: terraform-${{ inputs.landingzone }}-plan
+    - name: tags
+      run: |
+        ${{ toJSON(inputs.tags) }}) >> tags.tfvars.json && cat tags.tfvars.json
+      shell: bash
     - name: Install landingzones
       run: make landingzones
       shell: bash
