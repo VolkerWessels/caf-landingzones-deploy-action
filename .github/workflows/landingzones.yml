@@ -2,7 +2,8 @@ name: Landingzones
 
 on:
   push:
-    branches:
+    branches-ignore:
+      - main
       - feature/*
     paths-ignore:
       - 'README.md'
