@@ -42,7 +42,7 @@ jobs:
       - uses: ./
         name: Run ${{ matrix.action }}
         with:
-          tags: '{"OpCo": "IT BV", "OpsTeam": "SSC"}'
+          tags: '{tags: {"OpCo": "IT BV", "OpsTeam": "SSC"}}'
           action: ${{ matrix.action }}
           config_dir: ${{ github.workspace }}/.github/tests/config
           environment: ${{ github.run_id }} ## For azure tags
