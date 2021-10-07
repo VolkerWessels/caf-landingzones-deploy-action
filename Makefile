@@ -28,7 +28,7 @@ MAKEFLAGS += --no-print-directory
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-.PHONY: help info landingzones formatting solution_check _action validate init plan apply destroy
+.PHONY: help info landingzones formatting solution_check _action validate init plan apply destroy tags
 
 help:
 	@echo "Please use 'make [<arg1=a> <argN=...>] <target>' where <target> is one of"
@@ -126,17 +126,11 @@ _action:
 			-env $(ENVIRONMENT) \
 			$$_VARS"
 
-tags: _TAGS=$(TAGS)
 tags: _LEVEL=$(LEVEL)
 tags: _SOLUTION=$(SOLUTION)
+tags: _TAGS=$(shell echo -e "$(TAGS)" | base64 -d | yq eval '.' --output-format json -I1 - | jq '{"tags": .}' )
 tags:
-	echo $(_TAGS) && \
-	_TAGS=$(echo $(_TAGS) | base64 -d | yq --output-format=json)
-	echo '{tags:{"Level": "$(_LEVEL)", "Solution": "$(_SOLUTION)", $$_TAGS}}' | yq . > $(TFVARS_PATH)/tags.tfvars.json && \
-	apt-get install -y tree && \
-	tree -a $(TFVARS_PATH) && \
-	cp $(TFVARS_PATH)/tags.tfvars.json $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json && \
-	cat $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json
+	@echo -e "$(_TAGS)"
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
