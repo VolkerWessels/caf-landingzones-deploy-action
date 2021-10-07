@@ -135,8 +135,8 @@ tags: ## Genrate tags.tfvars.json for solution. Usage example: make tags TAGS=$(
 			base64 -d | \
 			yq -S --indent 2 \
 				--arg solution "$(_SOLUTION)" \
-				--arg level "$(_LEVEL)" \
-				'. + { solution: $$solution, Level: $$level } | {tags: . }' - \
+				--arg level "level$(_LEVEL)" \
+				'. + { solution: $$solution, level: $$level } | {tags: . }' - \
 		)
 	echo -e "$$JSON" > $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json
 	echo -e "${GREEN}Succesfully generated:\n\t$(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json${NC}"
