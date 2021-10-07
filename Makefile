@@ -129,8 +129,9 @@ _action:
 tags: _TAGS=$(TAGS)
 tags: _LEVEL=$(LEVEL)
 tags: _SOLUTION=$(SOLUTION)
+tags: _CONFIG_DIR=$(CONFIG_DIR)
 tags:
-	echo '{"Level": "$(_LEVEL)", "Solution": "$(_SOLUTION)"} $(_TAGS)' | jq -s add > '$(TFVARS_PATH)/SSC/tags.tfvars.json'
+	echo '{"Level": "$(_LEVEL)", "Solution": "$(_SOLUTION)"} $(_TAGS)' | jq -s add > '$(CONFIG_DIR)/tags.tfvars.json'
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)

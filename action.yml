@@ -63,7 +63,7 @@ runs:
       shell: bash
     - name: Run ${{ inputs.action }}
       id: solution-deployment
-      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
+      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} CONFIG_DIR=${{ inputs.config_dir }}
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         PREFIX: ${{ inputs.prefix }}
