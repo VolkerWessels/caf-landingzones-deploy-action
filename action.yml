@@ -59,7 +59,7 @@ runs:
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Create tags file with jq and move it to the solution folder
-      run: make tags TAGS='$(base64 ${{ input.tags }})' SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
+      run: make tags TAGS=$(base64 ${{ input.tags }}) SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Run ${{ inputs.action }}
