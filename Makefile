@@ -130,7 +130,7 @@ tags: _TAGS=$(TAGS)
 tags: _LEVEL=$(LEVEL)
 tags: _SOLUTION=$(SOLUTION)
 tags:
-	echo '{"Level": "$(_LEVEL)", "Solution": "$(_SOLUTION)"} $(_TAGS)' | jq -s add > '$(TFVARS_PATH)/tags.tfvars.json' && tree -a $(TFVARS_PATH)
+	echo '{"Level": "$(_LEVEL)", "Solution": "$(_SOLUTION)"} $(_TAGS)' | jq -s add > '$(TFVARS_PATH)/tags.tfvars.json' && apt-get install -y tree && tree -a $(TFVARS_PATH)
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
