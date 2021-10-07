@@ -58,7 +58,7 @@ runs:
       run: make login
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
-    - name: Create tags file with jq
+    - name: Create tags file with jq and move it to the solution folder
       run: make tags TAGS='${{ inputs.tags }}' SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
