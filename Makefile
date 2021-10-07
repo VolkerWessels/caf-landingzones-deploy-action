@@ -131,7 +131,7 @@ tags: _LEVEL=$(LEVEL)
 tags: _SOLUTION=$(SOLUTION)
 tags: _CONFIG_DIR=$(CONFIG_DIR)
 tags:
-	apt install tree -y && tree /home/runner/work && tree /__w/caf-landingzones-deploy-action && echo '{"Level": "$(_LEVEL)", "Solution": "$(_SOLUTION)"} $(_TAGS)' | jq -s add > '$(_CONFIG_DIR)/tags.tfvars.json'
+	apt install tree -y && tree -a /__w/caf-landingzones-deploy-action && tree -a $(TFVARS_PATH) && tree -a $(LANDINGZONES_DIR) && echo '{"Level": "$(_LEVEL)", "Solution": "$(_SOLUTION)"} $(_TAGS)' | jq -s add > '$(TFVARS_PATH)/tags.tfvars.json'
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
