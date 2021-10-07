@@ -131,7 +131,8 @@ tags: _LEVEL=$(LEVEL)
 tags: _SOLUTION=$(SOLUTION)
 tags:
 	echo $(_TAGS) && \
-	echo '{tags:{"Level": "$(_LEVEL)", "Solution": "$(_SOLUTION)", $(_TAGS)}}' | jq . > $(TFVARS_PATH)/tags.tfvars.json && \
+	_TAGS=$(echo $(_TAGS) | base64 -d | yq --output-format=json)
+	echo '{tags:{"Level": "$(_LEVEL)", "Solution": "$(_SOLUTION)", $$_TAGS}}' | yq . > $(TFVARS_PATH)/tags.tfvars.json && \
 	apt-get install -y tree && \
 	tree -a $(TFVARS_PATH) && \
 	cp $(TFVARS_PATH)/tags.tfvars.json $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json && \
