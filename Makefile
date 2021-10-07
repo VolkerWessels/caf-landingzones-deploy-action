@@ -41,7 +41,7 @@ info: ## Information about ENVIRONMENT variables and how to use them.
 PARALLELISM?='30'### Limit the number of concurrent operation as Terraform walks the graph. Defaults to 30.
 RANDOM_LENGTH?='5'### Random string length for azure resource naming. Defaults to 5
 
-_TFVARS_PATH:=/tf/caf/configuration
+_TFVARS_PATH:="$(shell pwd)/.github/tests/config"
 TFVARS_PATH?=$(_TFVARS_PATH)
 _BASE_DIR:=$(shell dirname $(TFVARS_PATH))
 
@@ -128,9 +128,16 @@ _action:
 
 tags: _LEVEL=$(LEVEL)
 tags: _SOLUTION=$(SOLUTION)
-tags: _TAGS=$(shell echo -e "$(TAGS)" | base64 -d | yq eval '.' --output-format json -I1 - | jq '{"tags": .}' )
-tags:
-	@echo -e "$(_TAGS)"
+tags: _TAGS=$(TAGS)
+tags: ## Genrate tags.tfvars.json for solution. Usage example: make tags TAGS=$(echo -e "OpCo: foo\nCostCenter: 0000" | base64)  LEVEL=1 SOLUTION=gitops
+	JSON=$$(echo -e "$(_TAGS)" | \
+			base64 -d | \
+			yq -S --indent 2 \
+				--arg solution "$(_SOLUTION)" \
+				--arg level "$(_LEVEL)" \
+				'. + { solution: $$solution, Level: $$level } | {tags: . }' - \
+		)
+	echo -e "$$JSON" > $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
