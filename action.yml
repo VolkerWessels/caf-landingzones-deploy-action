@@ -59,9 +59,13 @@ runs:
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Run jq command to create tags file
-      run: make tags TAGS='${{ inputs.tags }}' SOLUTION='${{ inputs.landingzone }}' LEVEL='${{ inputs.level }}'
+      run: make tags TAGS='${{ inputs.tags }}' SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
+    - name: Copy tags file
+      run: cp ${{ env.TFVARS_PATH }}/tags.tfvars.json ${{ env.TFVARS_PATH }}/level${{ inputs.level }}/${{ inputs.landingzone }}/tags.tfvars.json
+    - name: Show contents of tags file
+      run: cat ${{ env.TFVARS_PATH }}/level${{ inputs.level }}/${{ inputs.landingzone }}/tags.tfvars.json
     - name: Run ${{ inputs.action }}
       id: solution-deployment
       run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
