@@ -51,6 +51,7 @@ jobs:
             OpCo: FooBar
             CostCenter: 000000
             Approver: Me
+            testing_job_id: ${{ github.run_id }}
           action: ${{ matrix.action }}
           config_dir: ${{ github.workspace }}/.github/tests/config
           environment: ${{ github.run_id }} ## For azure tags
