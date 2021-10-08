@@ -18,6 +18,15 @@ env:
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   ROVER_IMAGE: aztfmod/rover:1.0.4-2108.1802
+  TAGS: |
+    BusinessOwner: Us
+    Owner: You
+    OpsTeam: Test
+    ServiceClass: bronze
+    OpCo: FooBar
+    CostCenter: 000000
+    Approver: Me
+    testing_job_id: ${{ github.run_id }}
 
 jobs:
   landingzones:
@@ -43,15 +52,7 @@ jobs:
       - uses: ./
         name: Run ${{ matrix.action }}
         with:
-          tags: |
-            BusinessOwner: Us
-            Owner: You
-            OpsTeam: Test
-            ServiceClass: bronze
-            OpCo: FooBar
-            CostCenter: 000000
-            Approver: Me
-            testing_job_id: ${{ github.run_id }}
+          tags: ${{ env.TAGS }}
           action: ${{ matrix.action }}
           config_dir: ${{ github.workspace }}/.github/tests/config
           environment: ${{ github.run_id }} ## For azure tags
@@ -85,6 +86,7 @@ jobs:
       - uses: ./
         name: Run ${{ matrix.action }}
         with:
+          tags: ${{ env.TAGS }}
           action: ${{ matrix.action }}
           config_dir: ${{ github.workspace }}/.github/tests/config
           environment: ${{ github.run_id }} ## For azure tags
