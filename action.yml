@@ -46,7 +46,7 @@ runs:
           uses: actions/download-artifact@v2
           with:
             name: terraform-${{ inputs.landingzone }}-plan
-            path: ${{ env.BASE_PATH }}/${{ inputs.prefix }}-${{ inputs.landingzone }}.tfplan
+            path: ${{ env.BASE_PATH }}/
     - name: Install landingzones
       run: make landingzones
       shell: bash
