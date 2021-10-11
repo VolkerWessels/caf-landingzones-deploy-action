@@ -30,7 +30,7 @@ env:
 
 jobs:
   landingzones:
-    name: Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
+    name: Run '${{ matrix.action }}' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
     runs-on: ubuntu-latest
     environment: 'non-prd' ## For secrets
 
@@ -50,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./
-        name: Run ${{ matrix.action }}
+        name: Run '${{ matrix.action }}' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
         with:
           tags: ${{ env.TAGS }}
           action: ${{ matrix.action }}
@@ -61,6 +61,7 @@ jobs:
           prefix: g${{ github.run_id }}
 
   landingzones_destroy:
+    name: Run 'destroy' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
     needs: landingzones
     if: always() # Always clean up our mess
     runs-on: ubuntu-latest
