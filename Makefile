@@ -129,7 +129,7 @@ _action:
 tags: _LEVEL=$(LEVEL)
 tags: _SOLUTION=$(SOLUTION)
 tags: _TAGS=$(TAGS)
-tags: ## Genrate tags.tfvars.json for solution. Usage example: make tags TAGS=$(echo -e "OpCo: foo\nCostCenter: 0000" | base64)  LEVEL=1 SOLUTION=gitops
+tags: ## Generate tags.tfvars.json for solution. Usage example: make tags TAGS=$(echo -e "OpCo: foo\nCostCenter: 0000" | base64)  LEVEL=1 SOLUTION=gitops
 	echo -e "${GREEN}Generating tags.tfvars.json for '$(_SOLUTION) level$(_LEVEL)'${NC}"
 	_TAGS="$$(echo -n $(_TAGS) | base64 -d )"
 	if [ -z "$$_TAGS" ]; then _TAGS="{ solution:, level: }"; fi
