@@ -17,7 +17,7 @@ env:
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-  ROVER_IMAGE: aztfmod/rover:1.0.4-2108.1802
+  ROVER_IMAGE: aztfmod/rover:1.0.7-2109.2410
   TAGS: |
     BusinessOwner: Us
     Owner: You
