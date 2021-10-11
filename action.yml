@@ -19,7 +19,9 @@ inputs:
   level:
     description: 'Deploy level'
     required: true
-    default: true
+  tags:
+    description: 'Json string of tags to import'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -44,6 +46,7 @@ runs:
           uses: actions/download-artifact@v2
           with:
             name: terraform-${{ inputs.landingzone }}-plan
+            path: ${{ env.BASE_PATH }}/
     - name: Install landingzones
       run: make landingzones
       shell: bash
@@ -53,6 +56,10 @@ runs:
         TF_LZ_BRANCH: 2108.0-modified
     - name: Azure login with service principal
       run: make login
+      working-directory: ${{ env.GITHUB_ACTION_PATH }}
+      shell: bash
+    - name: Create tags file with jq and move it to the solution folder
+      run: make tags TAGS=$( echo -n "${{ inputs.tags }}" | base64 -w 0) SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Run ${{ inputs.action }}

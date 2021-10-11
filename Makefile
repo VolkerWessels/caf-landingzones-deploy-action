@@ -28,7 +28,7 @@ MAKEFLAGS += --no-print-directory
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-.PHONY: help info landingzones formatting solution_check _action validate init plan apply destroy
+.PHONY: help info landingzones formatting solution_check _action validate init plan apply destroy tags
 
 help:
 	@echo "Please use 'make [<arg1=a> <argN=...>] <target>' where <target> is one of"
@@ -41,7 +41,7 @@ info: ## Information about ENVIRONMENT variables and how to use them.
 PARALLELISM?='30'### Limit the number of concurrent operation as Terraform walks the graph. Defaults to 30.
 RANDOM_LENGTH?='5'### Random string length for azure resource naming. Defaults to 5
 
-_TFVARS_PATH:=/tf/caf/configuration
+_TFVARS_PATH:="$(shell pwd)/.github/tests/config"
 TFVARS_PATH?=$(_TFVARS_PATH)
 _BASE_DIR:=$(shell dirname $(TFVARS_PATH))
 
@@ -125,6 +125,22 @@ _action:
 			-parallelism $(PARALLELISM) \
 			-env $(ENVIRONMENT) \
 			$$_VARS"
+
+tags: _LEVEL=$(LEVEL)
+tags: _SOLUTION=$(SOLUTION)
+tags: _TAGS=$(TAGS)
+tags: ## Genrate tags.tfvars.json for solution. Usage example: make tags TAGS=$(echo -e "OpCo: foo\nCostCenter: 0000" | base64)  LEVEL=1 SOLUTION=gitops
+	echo -e "${GREEN}Generating tags.tfvars.json for '$(_SOLUTION) level$(_LEVEL)'${NC}"
+	_TAGS="$$(echo -n $(_TAGS) | base64 -d )"
+	if [ -z "$$_TAGS" ]; then _TAGS="{ solution:, level: }"; fi
+	JSON=$$(echo -e "$$_TAGS" | \
+			yq -S --indent 2 \
+				--arg solution "$(_SOLUTION)" \
+				--arg level "level$(_LEVEL)" \
+				'. + { solution: $$solution, level: $$level } | {tags: . }' - \
+		)
+	echo -e "$$JSON" > $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json
+	echo -e "${GREEN}Succesfully generated:\n\t$(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json${NC}"
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
