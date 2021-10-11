@@ -86,9 +86,7 @@ jobs:
         uses: VolkerWessels/caf-landingzones-destroy-action@v1
         with:
           tags: ${{ env.TAGS }}
-          action: ${{ matrix.action }}
           config_dir: ${{ github.workspace }}/.github/tests/config
           environment: ${{ github.run_id }} ## For azure tags
           level: ${{ matrix.landingzones.level }}
           landingzone: ${{ matrix.landingzones.landingzone }}
-          prefix: g${{ github.run_id }}
