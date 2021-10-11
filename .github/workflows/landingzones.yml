@@ -30,7 +30,7 @@ env:
 
 jobs:
   landingzones:
-    name:  Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
+    name: Run '${{ matrix.action }}' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
     runs-on: ubuntu-latest
     environment: 'non-prd' ## For secrets
 
@@ -50,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./
-        name: Run ${{ matrix.action }}
+        name: Run '${{ matrix.action }}' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
         with:
           tags: ${{ env.TAGS }}
           action: ${{ matrix.action }}
@@ -61,9 +61,9 @@ jobs:
           prefix: g${{ github.run_id }}
 
   landingzones_destroy:
+    name: Run 'destroy' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
     needs: landingzones
-    if: always() # Always try to clean up our mess
-    name:  Run `${{ matrix.action }}` on `${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )`
+    if: always() # Always clean up our mess
     runs-on: ubuntu-latest
     environment: 'non-prd' ## For secrets
     continue-on-error: true
@@ -83,13 +83,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: ./
-        name: Run ${{ matrix.action }}
+      - name: Run 'destroy' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
+        uses: VolkerWessels/caf-landingzones-destroy-action@v1
         with:
           tags: ${{ env.TAGS }}
-          action: ${{ matrix.action }}
           config_dir: ${{ github.workspace }}/.github/tests/config
           environment: ${{ github.run_id }} ## For azure tags
           level: ${{ matrix.landingzones.level }}
           landingzone: ${{ matrix.landingzones.landingzone }}
-          prefix: g${{ github.run_id }}
