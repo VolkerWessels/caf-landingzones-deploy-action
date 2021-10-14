@@ -28,7 +28,7 @@ MAKEFLAGS += --no-print-directory
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-.PHONY: help info landingzones formatting solution_check _action validate init plan apply destroy tags
+.PHONY: help info landingzones login logout formatting solution_check _action validate init plan apply destroy tags
 
 help:
 	@echo "Please use 'make [<arg1=a> <argN=...>] <target>' where <target> is one of"
@@ -54,7 +54,7 @@ PREFIX?=$(_PREFIX)
 PREFIX?=$(shell echo $(PREFIX)|tr '[:upper:]' '[:lower:]')### Prefix azure resource naming.
 
 _TF_VAR_workspace:=tfstate
-TF_VAR_workspace?=$(_TF_VAR_workspace)### Terraform workspace. Defaults to <PREFIX>_tfstate.
+TF_VAR_workspace?=$(_TF_VAR_workspace)### Terraform workspace. Defaults to`tfstate`.
 
 TF_VAR_tfstate_subscription_id:=$(ARM_SUBSCRIPTION_ID)
 

@@ -41,7 +41,7 @@ runs:
           ${{ runner.os }}-terraform-
     - uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
-        if: ${{ inputs.action == 'apply' || inputs.action == 'destroy' }}
+        if: ${{ inputs.action == 'apply' }}
         step: |
           uses: actions/download-artifact@v2
           with:

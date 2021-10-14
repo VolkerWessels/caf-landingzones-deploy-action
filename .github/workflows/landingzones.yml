@@ -77,17 +77,17 @@ jobs:
       max-parallel: 1
       matrix:
         landingzones:
-          - { level: "1", landingzone: "gitops" }
-          - { level: "0", landingzone: "launchpad" }
-        action: ["destroy"]
+          - { level: "1", landingzone: "gitops", purge: false}
+          - { level: "0", landingzone: "launchpad", purge: true}
 
     steps:
       - uses: actions/checkout@v2
       - name: Run 'destroy' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
         uses: VolkerWessels/caf-landingzones-destroy-action@v1
         with:
-          tags: ${{ env.TAGS }}
+          purge: ${{ matrix.purge }}
           config_dir: ${{ github.workspace }}/.github/tests/config
           environment: ${{ github.run_id }} ## For azure tags
           level: ${{ matrix.landingzones.level }}
           landingzone: ${{ matrix.landingzones.landingzone }}
+          prefix: g${{ github.run_id }}

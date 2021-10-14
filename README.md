@@ -48,8 +48,6 @@ steps:
     prefix: 'foo-bar'
 ```
 
-
-
 When in need of a more complex setup use a matrix like so:
 
 ```yaml
@@ -73,6 +71,12 @@ steps:
     level: ${{ matrix.landingzones.level }}
     landingzone: ${{ matrix.landingzones.landingzone }}
     prefix: 'foo-bar'
+    tags: |
+      BusinessOwner: Us
+      Owner: You
+      OpsTeam: Test
+      ServiceClass: bronze
+      OpCo: FooBar
 ```
 
 ### Full workflow example
@@ -118,6 +122,12 @@ jobs:
           prefix: opco
           level: ${{ matrix.landingzones.level }}
           landingzone: ${{ matrix.landingzones.landingzone }}
+          tags: |
+            BusinessOwner: Us
+            Owner: You
+            OpsTeam: Test
+            ServiceClass: bronze
+            OpCo: FooBar
 ```
 
 ## Inputs
@@ -128,14 +138,13 @@ The action supports the following inputs:
   - `validate`
   - `plan`
   - `apply`
-  - `destroy`
   
 - `config_dir` - (required) the directory containing the `*.tfvar(.json)` files.
 - `environment` - (required) the environment you are deploying to, should preferably matcht the environments for secrets. Use ${{ github.run_id }} for CI purposes.
 - `landingzone` - (required) the segment (launchpad, solution or add-on) of a cloud environment to deploy.
 - `level` - (required) the landingzone [isolation level](https://github.com/Azure/caf-terraform-landingzones/blob/master/documentation/code_architecture/hierarchy.md)
-- `prefix` - (prefix) prefix to prepend as the first characters of the generated name. Use g${{ github.run_id }} for CI purposes.
-
+- `prefix` - (required) prefix to prepend as the first characters of the generated name. Use g${{ github.run_id }} for CI purposes.
+- `tags` - (optional) extra tags to add to all resources where applicable.
 
 ## Experimental Status
 
