@@ -85,7 +85,7 @@ jobs:
       - name: Run 'destroy' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
         uses: VolkerWessels/caf-landingzones-destroy-action@v1
         with:
-          purge: ${{ matrix.purge }}
+          purge: ${{ matrix.landingzones.purge }}
           config_dir: ${{ github.workspace }}/.github/tests/config
           environment: ${{ github.run_id }} ## For azure tags
           level: ${{ matrix.landingzones.level }}
