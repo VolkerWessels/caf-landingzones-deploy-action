@@ -66,11 +66,9 @@ runs:
       run: make tags TAGS=$( echo -n "${{ inputs.tags }}" | base64 -w 0) SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
-    - name: Keyvault check
-      run: make kv_check LEVEL=${{ inputs.level }}
+    - name: Wait for 120 seconds for azure cache to populate
+      run: sleep 120s
       shell: bash
-      env:
-        ENVIRONMENT: ${{ inputs.environment }}
     - name: Run ${{ inputs.action }}
       id: solution-deployment
       run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}

@@ -172,8 +172,3 @@ show: _ACTION=show
 show: _LEVEL=$(LEVEL)
 show: _SOLUTION=$(SOLUTION)
 show: _action ## Run `terraform show` using rover. Usage example: make show SOLUTION=application LEVEL=4
-
-kv_check: _LEVEL=$(LEVEL)
-kv_check:
-	@echo -e "${GREEN}az keyvault list${NC}"
-	az keyvault list --debug --subscription $(ARM_SUBSCRIPTION_ID) --query "[?tags.tfstate=='level$(_LEVEL)' && tags.environment=='$(ENVIRONMENT)']" -o json | jq -r .[0].name
