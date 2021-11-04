@@ -1,6 +1,10 @@
 name: 'CAF landing zone deployment'
 description: 'VolkerWessels biased CAF landing zone deployment'
 inputs:
+  branch:
+    description: 'The branch of the caf-terraform-landingzones repository'
+    default: 2108-modified
+    required: false
   action:
     description: 'CAF terraform action to run. One of (validate, init, plan, apply, show or destroy)'
     required: true
@@ -53,7 +57,7 @@ runs:
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         TF_LZ_GIT: https://github.com/VolkerWessels/caf-terraform-landingzones.git
-        TF_LZ_BRANCH: 2108.0-modified
+        TF_LZ_BRANCH: ${{ inputs.branch }}
     - name: Azure login with service principal
       run: make login
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
