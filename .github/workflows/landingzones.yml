@@ -1,8 +1,8 @@
 name: Landingzones
 
 on:
-  schedule:
-    - cron: "0 * * * *"
+#  schedule:
+#    - cron: "0 * * * *"
   push:
     branches-ignore:
       - main
@@ -79,7 +79,7 @@ jobs:
       max-parallel: 1
       matrix:
         landingzones:
-          - { level: "1", landingzone: "gitops", purge: false}
+          - { level: "1", landingzone: "gitops", purge: true}
           - { level: "0", landingzone: "launchpad", purge: true}
 
     steps:
