@@ -56,8 +56,6 @@ PREFIX?=$(shell echo $(PREFIX)|tr '[:upper:]' '[:lower:]')### Prefix azure resou
 _TF_VAR_workspace:=tfstate
 TF_VAR_workspace?=$(_TF_VAR_workspace)### Terraform workspace. Defaults to`tfstate`.
 
-TF_VAR_tfstate_subscription_id:=$(ARM_SUBSCRIPTION_ID)
-
 landingzones: ## Install caf-terraform-landingzones
 	@echo -e "${LIGHTGRAY}TFVARS_PATH:		$(TFVARS_PATH)${NC}"
 	@echo -e "${LIGHTGRAY}LANDINGZONES_DIR:	$(LANDINGZONES_DIR)${NC}"
