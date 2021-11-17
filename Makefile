@@ -113,7 +113,8 @@ _action:
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $(_BASE_DIR)/$(PREFIX).tfplan"; fi
 	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} You cannot destroy landingzones using the deploy action, use the caf-landingzones-destroy-action instead ${NC}" && exit; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$(_SOLUTION)"; fi
-	/az storage account list --subscription 507ac163-3bf1-4184-afca-b269731ede18 --query "[?tags.tfstate=='level3' && tags.environment=='non-prd'].{id:id}[0]" -o json --debug
+	/bin/bash -c \
+		az storage account list --subscription 507ac163-3bf1-4184-afca-b269731ede18 --query "[?tags.tfstate=='level3' && tags.environment=='non-prd'].{id:id}[0]" -o json --debug \
 	/bin/bash -c \
 		"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
 			$(_VAR_FOLDERS) \
