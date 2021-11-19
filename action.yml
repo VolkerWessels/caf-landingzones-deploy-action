@@ -3,7 +3,7 @@ description: 'VolkerWessels biased CAF landing zone deployment'
 inputs:
   branch:
     description: 'The branch of the caf-terraform-landingzones repository'
-    default: 2108.0-modified
+    default: vmss-extensions-autoscale-combined
     required: false
   action:
     description: 'CAF terraform action to run. One of (validate, init, plan, apply, show or destroy)'
