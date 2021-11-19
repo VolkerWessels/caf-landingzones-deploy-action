@@ -118,7 +118,7 @@ _action:
 			$(_VAR_FOLDERS) \
 			-level $$_LEVEL \
 			-tfstate $(_TFSTATE).tfstate \
-			-log-severity DEBUG \
+			-log-severity ERROR \
 			-parallelism $(PARALLELISM) \
 			-env $(ENVIRONMENT) \
 			$$_VARS"
