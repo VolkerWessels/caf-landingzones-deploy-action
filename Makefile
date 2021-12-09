@@ -81,7 +81,7 @@ login: ## Login to azure using a service principal
 logout: ## Logout service principal
 	@echo -e "${GREEN}Logout service principal${NC}"
 	az logout || true
-	# Cleaup any service principal session
+    # Cleanup any service principal session
 	unset ARM_TENANT_ID
 	unset ARM_SUBSCRIPTION_ID
 	unset ARM_CLIENT_ID
@@ -114,14 +114,14 @@ _action:
 	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} You cannot destroy landingzones using the deploy action, use the caf-landingzones-destroy-action instead ${NC}" && exit; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$(_SOLUTION)"; fi
 	/bin/bash -c \
-		"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
-			$(_VAR_FOLDERS) \
-			-level $$_LEVEL \
-			-tfstate $(_TFSTATE).tfstate \
-			-log-severity ERROR \
-			-parallelism $(PARALLELISM) \
-			-env $(ENVIRONMENT) \
-			$$_VARS"
+			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
+				$(_VAR_FOLDERS) \
+				-level $$_LEVEL \
+				-tfstate $(_TFSTATE).tfstate \
+				-log-severity ERROR \
+				-parallelism $(PARALLELISM) \
+				-env $(ENVIRONMENT) \
+				$$_VARS" || if [ "$$?" -eq 2 ]; then true; fi
 
 tags: _LEVEL=$(LEVEL)
 tags: _SOLUTION=$(SOLUTION)
