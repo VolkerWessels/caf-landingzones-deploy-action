@@ -121,7 +121,7 @@ _action:
 				-log-severity ERROR \
 				-parallelism $(PARALLELISM) \
 				-env $(ENVIRONMENT) \
-				$$_VARS" || if [ "$$?" -eq 2 ]; then true; fi
+				$$_VARS" || if [ "$$?" -eq 2 ]; then true; else "$$?"; fi
 
 tags: _LEVEL=$(LEVEL)
 tags: _SOLUTION=$(SOLUTION)
