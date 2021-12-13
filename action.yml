@@ -99,5 +99,5 @@ runs:
             path: |
               ${{ env.BASE_PATH }}/**/*.vars.json
               ${{ env.BASE_PATH }}/**/debug.txt
-            if-no-files-found: warning
+            if-no-files-found: ignore
 
