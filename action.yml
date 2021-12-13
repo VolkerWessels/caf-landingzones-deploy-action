@@ -88,4 +88,16 @@ runs:
             name: terraform-${{ inputs.landingzone }}-plan
             path: ${{ env.BASE_PATH }}/*.tfplan
             if-no-files-found: error
+    - name: Gather debug files
+      uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
+      with:
+        if: ${{ inputs.action == 'apply'}}
+        step: |
+          uses: actions/upload-artifact@v2
+          with:
+            name: terraform-${{ inputs.landingzone }}-apply
+            path: |
+              ${{ env.BASE_PATH }}/**/*.vars.json
+              ${{ env.BASE_PATH }}/**/debug.txt
+            if-no-files-found: warning
 
