@@ -96,6 +96,6 @@ runs:
           uses: actions/upload-artifact@v2
           with:
             name: terraform-${{ inputs.landingzone }}-apply
-            path: ${{ env.BASE_PATH }}/**/debug.txt
+            path: ${{ env.BASE_PATH }}/**/*debug*.txt
             if-no-files-found: ignore
 
