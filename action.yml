@@ -23,6 +23,9 @@ inputs:
   level:
     description: 'Deploy level'
     required: true
+  subscription_name:
+    description: 'Name of the subscription the landingzone should be deployed in'
+    required: false
   tags:
     description: 'Json string of tags to import'
     required: false
@@ -60,6 +63,8 @@ runs:
         TF_LZ_BRANCH: ${{ inputs.branch }}
     - name: Azure login with service principal
       run: make login
+      env:
+        ARM_SUBSCRIPTION_NAME: ${{ inputs.subscription_name }}
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Create tags file with jq and move it to the solution folder

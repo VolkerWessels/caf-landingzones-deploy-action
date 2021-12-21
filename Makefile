@@ -70,9 +70,14 @@ landingzones: ## Install caf-terraform-landingzones
 login: ## Login to azure using a service principal
 	@echo -e "${GREEN}Azure login using service principal${NC}"
 	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p ${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID};
-	if [ ! -z "$${ARM_SUBSCRIPTION_ID}" ]; then \
-		echo -e "${LIGHTGREEN}Subscription set!${NC}";
-		az account set --subscription $$ARM_SUBSCRIPTION_ID; \
+	if [ -v ARM_SUBSCRIPTION_ID ]; then \
+		echo -e "${LIGHTGREEN}Subscription set!${NC}"; \
+		az account set --subscription $$ARM_SUBSCRIPTION_ID;
+	elif [ -v ARM_SUBSCRIPTION_NAME ]; then \
+		ARM_SUBSCRIPTION_ID="$$(az account list --refresh --query '[?name==`${ARM_SUBSCRIPTION_NAME}`].id' --output tsv --only-show-errors)"; \
+		az account set --subscription "$${ARM_SUBSCRIPTION_ID}"; \
+    	echo -e "${LIGHTGREEN}Subscription set by name '${ARM_SUBSCRIPTION_NAME}'!${NC}"; \
+    	export ARM_SUBSCRIPTION_ID=="$${ARM_SUBSCRIPTION_ID}"
 	else \
 		echo -e "${RED}No subscription set!${NC}"; exit 1;
 	fi
@@ -84,6 +89,7 @@ logout: ## Logout service principal
     # Cleanup any service principal session
 	unset ARM_TENANT_ID
 	unset ARM_SUBSCRIPTION_ID
+	unset ARM_SUBSCRIPTION_NAME
 	unset ARM_CLIENT_ID
 	unset ARM_CLIENT_SECRET
 
@@ -104,15 +110,16 @@ _action:
 	@echo -e "${LIGHTGRAY}$$(cd $(_BASE_DIR) && pwd)${NC}"
 	@echo -e "${GREEN}Terraform $(_ACTION) for '$(_SOLUTION) level$(_LEVEL)'${NC}"
 	_ACTION=$(_ACTION)
-	_PLAN="$(_BASE_DIR)/$(PREFIX)-$(_SOLUTION).tfplan"
+	_SOLUTION=$(_SOLUTION)
+	_PLAN="$(_BASE_DIR)/$(PREFIX)-$${_SOLUTION////-}.tfplan"
 	_ADD_ON=$(_ADD_ON)
 	_LEVEL="level$(_LEVEL)"
 	_VARS=""
 	if [ "$(_LEVEL)" == "0" ]; then _ADD_ON="caf_launchpad" _LEVEL="level0 -launchpad" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
-	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $(_BASE_DIR)/$(PREFIX).tfplan"; fi
+	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $${_PLAN}"; fi
 	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} You cannot destroy landingzones using the deploy action, use the caf-landingzones-destroy-action instead ${NC}" && exit; fi
-	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$(_SOLUTION)"; fi
+	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$${_SOLUTION}"; fi
 	/bin/bash -c \
 			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
 				$(_VAR_FOLDERS) \
