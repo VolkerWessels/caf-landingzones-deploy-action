@@ -99,7 +99,7 @@ _workspace:
 
 _action: _ADD_ON = "caf_solution/"
 _action: _TFSTATE = $(shell basename $(_SOLUTION))
-_action: _VAR_FOLDERS= $(shell find $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION) -type d -print0 | xargs -0 -I '{}' sh -c "printf -- '-var-folder %s \ \n' '{}';" )
+_action: _VAR_FOLDERS= $(shell if [ -d "$(TFVARS_PATH)/level$(_LEVEL)/$(SOLUTION)" ]; then find $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION) -type d -print0; elif [ -d "$(TFVARS_PATH)/level$(_LEVEL)/add-ons/$(_SOLUTION)" ]; then find $(TFVARS_PATH)/level$(_LEVEL)/add-ons/$(_SOLUTION) -type d -print0; else echo "Folder couldn't be found"; fi | xargs -0 -I '{}' sh -c "printf -- '-var-folder %s \ \n' '{}';" )
 _action:
 	@echo -e "${LIGHTGRAY}$$(cd $(_BASE_DIR) && pwd)${NC}"
 	@echo -e "${GREEN}Terraform $(_ACTION) for '$(_SOLUTION) level$(_LEVEL)'${NC}"
@@ -113,6 +113,7 @@ _action:
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $(_BASE_DIR)/$(PREFIX).tfplan"; fi
 	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} You cannot destroy landingzones using the deploy action, use the caf-landingzones-destroy-action instead ${NC}" && exit; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$(_SOLUTION)"; fi
+	if [ -d "$(LANDINGZONES_DIR)/caf_solution/add-ons/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/add-ons/$(_SOLUTION)"; fi
 	/bin/bash -c \
 			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
 				$(_VAR_FOLDERS) \
@@ -136,8 +137,17 @@ tags: ## Generate tags.tfvars.json for solution. Usage example: make tags TAGS=$
 				--arg level "level$(_LEVEL)" \
 				'. + { solution: $$solution, level: $$level } | {tags: . }' - \
 		)
-	echo -e "$$JSON" > $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json
-	echo -e "${GREEN}Succesfully generated:\n\t$(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json${NC}"
+	if [ -d "$(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)" ]
+	then
+		echo -e "$$JSON" > $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json
+		echo -e "${GREEN}Succesfully generated:\n\t$(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json${NC}"
+	elif [ -d "$(TFVARS_PATH)/level$(_LEVEL)/add-ons/$(_SOLUTION)" ]
+	then
+		echo -e "$$JSON" > $(TFVARS_PATH)/level$(_LEVEL)/add-ons/$(_SOLUTION)/tags.tfvars.json
+		echo -e "${GREEN}Succesfully generated:\n\t$(TFVARS_PATH)/level$(_LEVEL)/add-ons/$(_SOLUTION)/tags.tfvars.json${NC}"
+	else
+		echo -e "Folder couldn't be found"
+	fi
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
