@@ -122,6 +122,7 @@ jobs:
           prefix: opco
           level: ${{ matrix.landingzones.level }}
           landingzone: ${{ matrix.landingzones.landingzone }}
+          subscription_name: "my subscription name"
           tags: |
             BusinessOwner: Us
             Owner: You
@@ -138,12 +139,14 @@ The action supports the following inputs:
   - `validate`
   - `plan`
   - `apply`
-  
+
+- `branch` - (optional) The branch to use of the '[caf-terraform-landingzones](https://github.com/VolkerWessels/caf-terraform-landingzones)' repository
 - `config_dir` - (required) the directory containing the `*.tfvar(.json)` files.
 - `environment` - (required) the environment you are deploying to, should preferably matcht the environments for secrets. Use ${{ github.run_id }} for CI purposes.
 - `landingzone` - (required) the segment (launchpad, solution or add-on) of a cloud environment to deploy.
 - `level` - (required) the landingzone [isolation level](https://github.com/Azure/caf-terraform-landingzones/blob/master/documentation/code_architecture/hierarchy.md)
 - `prefix` - (required) prefix to prepend as the first characters of the generated name. Use g${{ github.run_id }} for CI purposes.
+- `subscription_name` - (optional) The name of the subscription the landingzone should be deployed in.
 - `tags` - (optional) extra tags to add to all resources where applicable.
 
 ## Experimental Status

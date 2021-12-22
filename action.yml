@@ -33,6 +33,8 @@ runs:
   using: "composite"
   steps:
     - run: |
+        LZ_NAME=${{inputs.landingzone}} ;
+        echo "LANDINGZONE_NAME=${LZ_NAME////-}" >> $GITHUB_ENV;
         echo "GITHUB_ACTION_PATH=${GITHUB_ACTION_PATH}" >> $GITHUB_ENV;
         echo "TFVARS_PATH=${{ inputs.config_dir }}" >> $GITHUB_ENV;
         echo "BASE_PATH=$(dirname ${{ inputs.config_dir }})" >> $GITHUB_ENV;
@@ -52,7 +54,7 @@ runs:
         step: |
           uses: actions/download-artifact@v2
           with:
-            name: terraform-${{ inputs.landingzone }}-plan
+            name: terraform-${{ env.LANDINGZONE_NAME }}-plan
             path: ${{ env.BASE_PATH }}/
     - name: Install landingzones
       run: make landingzones
@@ -90,7 +92,7 @@ runs:
         step: |
           uses: actions/upload-artifact@v2
           with:
-            name: terraform-${{ inputs.landingzone }}-plan
+            name: terraform-${{ env.LANDINGZONE_NAME }}-plan
             path: ${{ env.BASE_PATH }}/*.tfplan
             if-no-files-found: error
 
