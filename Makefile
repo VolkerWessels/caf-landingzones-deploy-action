@@ -70,11 +70,12 @@ landingzones: ## Install caf-terraform-landingzones
 login: ## Login to azure using a service principal
 	@echo -e "${GREEN}Azure login using service principal${NC}"
 	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p=${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID};
+	az config set extension.use_dynamic_install=yes_without_prompt;
 	if [ -v ARM_SUBSCRIPTION_ID ]; then \
 		echo -e "${LIGHTGREEN}Subscription set!${NC}"; \
 		az account set --subscription $$ARM_SUBSCRIPTION_ID;
 	elif [ -v ARM_SUBSCRIPTION_NAME ]; then \
-		ARM_SUBSCRIPTION_ID="$$(az graph query --q "resourcecontainers | where type == `microsoft.resources/subscriptions`| where name contains `${ARM_SUBSCRIPTION_NAME}`| where properties.state contains 'enabled'|project name" --query "data[0].name" -o tsv)"; \
+		ARM_SUBSCRIPTION_ID="$$(az graph query --q 'resourcecontainers | where type == `microsoft.resources/subscriptions`| where name contains `${ARM_SUBSCRIPTION_NAME}`| where properties.state contains 'enabled'|project name' --query 'data[0].name' -o tsv)"; \
 		az account set --subscription "$${ARM_SUBSCRIPTION_ID}"; \
 	  	echo -e "${LIGHTGREEN}Subscription set by name '${ARM_SUBSCRIPTION_NAME}'!${NC}"; \
 		export ARM_SUBSCRIPTION_ID="$${ARM_SUBSCRIPTION_ID}"
