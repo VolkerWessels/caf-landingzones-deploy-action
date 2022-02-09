@@ -74,7 +74,7 @@ login: ## Login to azure using a service principal
 		echo -e "${LIGHTGREEN}Subscription set!${NC}"; \
 		az account set --subscription $$ARM_SUBSCRIPTION_ID;
 	elif [ -v ARM_SUBSCRIPTION_NAME ]; then \
-		ARM_SUBSCRIPTION_ID="$$(az account list --refresh --query '[? contains(state, `enabled`) && name==`${ARM_SUBSCRIPTION_NAME}`].id' --output tsv --only-show-errors)"; \
+		ARM_SUBSCRIPTION_ID="$$(az account list --refresh --query '[? contains(state, `Enabled`) && name==`${ARM_SUBSCRIPTION_NAME}`].id' --output tsv --only-show-errors)"; \
 		az account set --subscription "$${ARM_SUBSCRIPTION_ID}"; \
 	  	echo -e "${LIGHTGREEN}Subscription set by name '${ARM_SUBSCRIPTION_NAME}'!${NC}"; \
 		export ARM_SUBSCRIPTION_ID="$${ARM_SUBSCRIPTION_ID}"
