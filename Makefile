@@ -76,7 +76,7 @@ login: ## Login to azure using a service principal
 		az account set --subscription $$ARM_SUBSCRIPTION_ID;
 	elif [ -v ARM_SUBSCRIPTION_NAME ]; then \
 		ARM_SUBSCRIPTION_ID=$$(az graph query -q "resourcecontainers | where type == 'microsoft.resources/subscriptions' | where properties.state contains 'enabled' | project subscriptionId" --query "data[].subscriptionId" -o tsv); \
-		az account set --subscription "$${ARM_SUBSCRIPTION_ID}; \
+		az account set --subscription "$${ARM_SUBSCRIPTION_ID}"; \
 	  	echo -e "${LIGHTGREEN}Subscription set by name '${ARM_SUBSCRIPTION_NAME}'!${NC}"; \
 		export ARM_SUBSCRIPTION_ID="$${ARM_SUBSCRIPTION_ID}"
 	else \
