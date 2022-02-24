@@ -56,8 +56,8 @@ runs:
       with:
         path: |
           ${{ env.TF_PLUGIN_CACHE_DIR }}
-          ${GITHUB_WORKSPACE}/landingzones/**/.terraform.lock.hcl
-        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${GITHUB_WORKSPACE}/landingzones/**/.terraform.lock.hcl') }}
+          ${GITHUB_WORKSPACE}/configuration/landingzones/**/.terraform.lock.hcl
+        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${GITHUB_WORKSPACE}/configuration/landingzones/**/.terraform.lock.hcl') }}
         restore-keys: |
           ${{ runner.os }}-terraform-
     - name: Install landingzones
@@ -85,9 +85,6 @@ runs:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
-    - name: list cache
-      run: cd ${GITHUB_WORKSPACE} && ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
-      shell: bash
     - name: Logout service principal
       run: make logout
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
@@ -102,6 +99,6 @@ runs:
             name: terraform-${{ env.LANDINGZONE_NAME }}-plan
             path: |
               ${{ env.BASE_PATH }}/*.tfplan
-              ${GITHUB_WORKSPACE}/**/.terraform.lock.hcl
+              ${GITHUB_WORKSPACE}/configuration/landingzones/**/.terraform.lock.hcl
             if-no-files-found: error
 
