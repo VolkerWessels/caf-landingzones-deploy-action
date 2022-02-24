@@ -86,8 +86,7 @@ runs:
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
     - name: locate .terraform.lock.hcl
-      run: find . -name .terraform.lock.hcl
-      working-directory: ${{ env.GITHUB_ACTION_PATH }}
+      run: find $(dirname ${{ env.TFVARS_PATH }})/landingzones -name .terraform.lock.hcl
       shell: bash
     - name: Logout service principal
       run: make logout
