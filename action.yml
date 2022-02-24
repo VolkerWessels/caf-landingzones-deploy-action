@@ -34,12 +34,12 @@ runs:
   steps:
     - run: |
         LZ_NAME=${{inputs.landingzone}};
+        BASE_PATH=$(dirname ${{ inputs.config_dir }});
         echo "LANDINGZONE_NAME=${LZ_NAME////-}" >> $GITHUB_ENV;
         echo "GITHUB_ACTION_PATH=${GITHUB_ACTION_PATH}" >> $GITHUB_ENV;
         echo "TFVARS_PATH=${{ inputs.config_dir }}" >> $GITHUB_ENV;
-        echo "BASE_PATH=$(dirname ${{ inputs.config_dir }})" >> $GITHUB_ENV;
-        echo "TF_PLUGIN_CACHE_DIR=/home/runner/work/plugin-cache" >> $GITHUB_ENV;
-        echo "TF_DATA_DIR=/home/runner/work/" >> $GITHUB_ENV;
+        echo "BASE_PATH=${BASE_PATH}" >> $GITHUB_ENV;
+        echo "TF_DATA_DIR=${BASE_PATH}" >> $GITHUB_ENV;
       shell: bash
     - name: Terraform Cache
       id: terraform-cache

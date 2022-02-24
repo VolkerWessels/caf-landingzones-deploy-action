@@ -149,7 +149,7 @@ _action:
 				-env $(ENVIRONMENT) \
 				$$_VARS" || exit_code="$$?" ; \
 				if [ "$$exit_code" -eq 2 ]; \
-					then echo "${GREEN}Plan succeeded with changes${NC}" && true; \
+					then echo -e "${GREEN}Plan succeeded with changes${NC}" && true; \
 				else \
 				  exit $$exit_code; \
 				fi
