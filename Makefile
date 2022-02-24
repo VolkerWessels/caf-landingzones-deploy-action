@@ -53,6 +53,9 @@ _PREFIX:=g$(GITHUB_RUN_ID)
 PREFIX?=$(_PREFIX)
 PREFIX?=$(shell echo $(PREFIX)|tr '[:upper:]' '[:lower:]')### Prefix azure resource naming.
 
+_IMPORT=""
+_ADDRESS=""
+
 _TF_VAR_workspace:=tfstate
 TF_VAR_workspace?=$(_TF_VAR_workspace)### Terraform workspace. Defaults to`tfstate`.
 
@@ -78,9 +81,8 @@ landingzones: ## Install caf-terraform-landingzones
 
 login: ## Login to azure using a service principal
 	az config set extension.use_dynamic_install=yes_without_prompt;
-	@echo -e "${LIGHTGREEN}Azure login using service principal.\n\n${GREEN}Available subscriptions:"
+	@echo -e "${LIGHTGREEN}Azure login using service principal.\n\nAvailable subscriptions:${NC}"
 	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p=${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID} --query "[?state == 'Enabled'].name" -o table;
-	@echo -e "${NC}"
 	if [ -v ARM_SUBSCRIPTION_ID ]; then \
 		echo -e "${LIGHTGREEN}Subscription set!${NC}"; \
 		az account set --subscription $$ARM_SUBSCRIPTION_ID;
