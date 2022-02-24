@@ -57,7 +57,7 @@ runs:
         path: |
           ${{ env.TF_PLUGIN_CACHE_DIR }}
           ${GITHUB_WORKSPACE}/configuration/landingzones/**/.terraform.lock.hcl
-        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${GITHUB_WORKSPACE}/configuration/landingzones/**/.terraform.lock.hcl') }}
+        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${GITHUB_WORKSPACE}/landingzones/**/.terraform.lock.hcl') }}
         restore-keys: |
           ${{ runner.os }}-terraform-
     - name: Install landingzones
@@ -84,6 +84,9 @@ runs:
       env:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
+      shell: bash
+    - name: list cache
+      run: apt install -y tree && cd ${GITHUB_WORKSPACE}/configuration tree
       shell: bash
     - name: Logout service principal
       run: make logout
