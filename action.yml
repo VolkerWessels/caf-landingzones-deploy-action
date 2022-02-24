@@ -42,6 +42,18 @@ runs:
         echo "TF_DATA_DIR=${GITHUB_WORKSPACE}" >> $GITHUB_ENV;
         echo "TF_PLUGIN_CACHE_DIR=${GITHUB_WORKSPACE}/plugin-cache" >> $GITHUB_ENV;
       shell: bash
+    - uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
+      with:
+        if: ${{ inputs.action == 'apply' }}
+        step: |
+          uses: actions/download-artifact@v2
+          with:
+            name: terraform-${{ env.LANDINGZONE_NAME }}-plan
+            path: ${{ env.BASE_PATH }}/
+    - name: Display structure of downloaded files
+      run: ls -R
+      shell: bash
+      working-directory: ${{ env.BASE_PATH }}/
     - name: Terraform Cache
       id: terraform-cache
       uses: actions/cache@v2
@@ -52,14 +64,9 @@ runs:
         key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${GITHUB_WORKSPACE}/landingzones/**/.terraform.lock.hcl') }}
         restore-keys: |
           ${{ runner.os }}-terraform-
-    - uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
-      with:
-        if: ${{ inputs.action == 'apply' }}
-        step: |
-          uses: actions/download-artifact@v2
-          with:
-            name: terraform-${{ env.LANDINGZONE_NAME }}-plan
-            path: ${{ env.BASE_PATH }}/
+    - name: list cache
+      run: cd ${GITHUB_WORKSPACE} && ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
+      shell: bash
     - name: Install landingzones
       run: make landingzones
       shell: bash
@@ -85,11 +92,6 @@ runs:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
-    - name: list cache
-      run: |
-        cd ${GITHUB_WORKSPACE}/landingzones && ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'; 
-        find . -name .terraform.lock.hcl || true
-      shell: bash
     - name: Logout service principal
       run: make logout
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
@@ -102,6 +104,8 @@ runs:
           uses: actions/upload-artifact@v2
           with:
             name: terraform-${{ env.LANDINGZONE_NAME }}-plan
-            path: ${{ env.BASE_PATH }}/*.tfplan
+            path: |
+              ${{ env.BASE_PATH }}/*.tfplan
+              ${GITHUB_WORKSPACE}/landingzones/**/.terraform.lock.hcl
             if-no-files-found: error
 
