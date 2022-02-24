@@ -57,7 +57,7 @@ runs:
         path: |
           ${{ env.TF_PLUGIN_CACHE_DIR }}
           ${GITHUB_WORKSPACE}/configuration/landingzones/**/.terraform.lock.hcl
-        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${GITHUB_WORKSPACE}/landingzones/**/.terraform.lock.hcl') }}
+        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${{ env.TF_DATA_DIR }}/configuration/landingzones/${{ env.LANDINGZONE_NAME }}/.terraform.lock.hcl') }}
         restore-keys: |
           ${{ runner.os }}-terraform-
     - name: Install landingzones
@@ -102,6 +102,6 @@ runs:
             name: terraform-${{ env.LANDINGZONE_NAME }}-plan
             path: |
               ${{ env.BASE_PATH }}/*.tfplan
-              ${GITHUB_WORKSPACE}/configuration/landingzones/**/.terraform.lock.hcl
+              ${{ env.TF_DATA_DIR }}/configuration/landingzones/${{ env.LANDINGZONE_NAME }}/.terraform.lock.hcl
             if-no-files-found: error
 
