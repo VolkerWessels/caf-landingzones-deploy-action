@@ -86,7 +86,9 @@ runs:
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
     - name: list cache
-      run: apt install -y tree && cd ${GITHUB_WORKSPACE}/configuration/landingzones && tree -a
+      run: |
+        apt install -y tree && cd ${GITHUB_WORKSPACE}/configuration/landingzones/${{ env.LANDINGZONE_NAME }}/ && tree -a;
+        cp $(find . -name .terraform.lock.hcl) ${{ env.BASE_PATH }}.terraform.lock.hcl
       shell: bash
     - name: Logout service principal
       run: make logout
@@ -102,6 +104,6 @@ runs:
             name: terraform-${{ env.LANDINGZONE_NAME }}-plan
             path: |
               ${{ env.BASE_PATH }}/*.tfplan
-              ${{ env.TF_DATA_DIR }}/configuration/landingzones/${{ env.LANDINGZONE_NAME }}/.terraform.lock.hcl
+              ${{ env.BASE_PATH }}/.terraform.lock.hcl
             if-no-files-found: error
 
