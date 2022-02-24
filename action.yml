@@ -86,7 +86,7 @@ runs:
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
     - name: list cache
-      run: apt install -y tree && cd ${GITHUB_WORKSPACE}/configuration tree
+      run: apt install -y tree && cd ${GITHUB_WORKSPACE}/configuration && tree
       shell: bash
     - name: Logout service principal
       run: make logout
