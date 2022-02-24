@@ -34,10 +34,13 @@ runs:
   steps:
     - run: |
         LZ_NAME=${{inputs.landingzone}} ;
+        USER=$(id -nu)
         echo "LANDINGZONE_NAME=${LZ_NAME////-}" >> $GITHUB_ENV;
         echo "GITHUB_ACTION_PATH=${GITHUB_ACTION_PATH}" >> $GITHUB_ENV;
         echo "TFVARS_PATH=${{ inputs.config_dir }}" >> $GITHUB_ENV;
         echo "BASE_PATH=$(dirname ${{ inputs.config_dir }})" >> $GITHUB_ENV;
+        echo "TF_PLUGIN_CACHE_DIR=/home/${USER}/plugin-cache" >> $GITHUB_ENV;
+        echo "TF_DATA_DIR: "/home/${USER}" >> $GITHUB_ENV;
       shell: bash
     - name: Terraform Cache
       id: terraform-cache
@@ -75,7 +78,7 @@ runs:
       shell: bash
     - name: Run ${{ inputs.action }}
       id: solution-deployment
-      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
+      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} 2>&1 | tee ${{ inputs.action }}.log
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         PREFIX: ${{ inputs.prefix }}

@@ -28,7 +28,7 @@ MAKEFLAGS += --no-print-directory
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-.PHONY: help info landingzones login logout formatting solution_check _action validate init plan apply destroy tags
+.PHONY: help info landingzones login logout formatting solution_check _action validate init plan apply destroy tags show list import
 
 help:
 	@echo "Please use 'make [<arg1=a> <argN=...>] <target>' where <target> is one of"
@@ -56,6 +56,15 @@ PREFIX?=$(shell echo $(PREFIX)|tr '[:upper:]' '[:lower:]')### Prefix azure resou
 _TF_VAR_workspace:=tfstate
 TF_VAR_workspace?=$(_TF_VAR_workspace)### Terraform workspace. Defaults to`tfstate`.
 
+_TF_LOG:=ERROR
+TF_LOG?=$(_TF_LOG)### Terraform logging. Defaults to`ERROR`.
+
+_TF_LOG_PATH:=./terraform.log
+TF_LOG_PATH?=$(_TF_LOG_PATH)### Terraform log outputfile. Defaults to`./terraform.log`.
+
+_TF_INPUT:="false"
+TF_INPUT=?=$(_TF_INPUT)### Causes terraform commands to behave as if the -input=false. Defaults to`false`.
+
 landingzones: ## Install caf-terraform-landingzones
 	@echo -e "${LIGHTGRAY}TFVARS_PATH:		$(TFVARS_PATH)${NC}"
 	@echo -e "${LIGHTGRAY}LANDINGZONES_DIR:	$(LANDINGZONES_DIR)${NC}"
@@ -68,9 +77,10 @@ landingzones: ## Install caf-terraform-landingzones
 	echo -e "${CYAN}#### ROVER IMAGE VERSION REQUIRED FOR LANDINGZONES: $$(cat $(LANDINGZONES_DIR)/.devcontainer/docker-compose.yml | yq .services.rover.image) ####${NC}"
 
 login: ## Login to azure using a service principal
-	@echo -e "${GREEN}Azure login using service principal${NC}"
-	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p=${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID};
 	az config set extension.use_dynamic_install=yes_without_prompt;
+	@echo -e "${LIGHTGREEN}Azure login using service principal.\n\n${GREEN}Available subscriptions:"
+	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p=${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID} --query "[?state == 'Enabled'].name" -o table;
+	@echo -e "${NC}"
 	if [ -v ARM_SUBSCRIPTION_ID ]; then \
 		echo -e "${LIGHTGREEN}Subscription set!${NC}"; \
 		az account set --subscription $$ARM_SUBSCRIPTION_ID;
@@ -82,7 +92,7 @@ login: ## Login to azure using a service principal
 	else \
 		echo -e "${RED}No subscription set!${NC}"; exit 1;
 	fi
-	@echo -e "${GREEN}Logged in to $$(az account show --query 'name')${NC}"; \
+	@echo -e "${LIGHTGREEN}Logged in to $$(az account show --query 'name')${NC}"; \
 
 logout: ## Logout service principal
 	@echo -e "${GREEN}Logout service principal${NC}"
@@ -116,20 +126,31 @@ _action:
 	_ADD_ON=$(_ADD_ON)
 	_LEVEL="level$(_LEVEL)"
 	_VARS=""
+	_IMPORT=$(_IMPORT)
+	_ADDRESS=$(_ADDRESS)
+	_VAR_FOLDERS="$(_VAR_FOLDERS)"
+	_PARALLELISM="-parallelism $(PARALLELISM)"
 	if [ "$(_LEVEL)" == "0" ]; then _ADD_ON="caf_launchpad" _LEVEL="level0 -launchpad" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
-	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $${_PLAN}"; fi
+	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $(PREFIX).tfplan"; fi
+	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
+	if [ "$(_ACTION)" == "show" ] || [ "$(_ACTION)" == "list" ]; then _ACTION="state\ $(_ACTION)" _VARS="$(_ADDRESS)" _VAR_FOLDERS="" _PARALLELISM=""; fi
 	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} You cannot destroy landingzones using the deploy action, use the caf-landingzones-destroy-action instead ${NC}" && exit; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$${_SOLUTION}"; fi
+	exit_code=0; \
 	/bin/bash -c \
 			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
-				$(_VAR_FOLDERS) \
+				$$_VAR_FOLDERS \
 				-level $$_LEVEL \
 				-tfstate $(_TFSTATE).tfstate \
-				-log-severity ERROR \
-				-parallelism $(PARALLELISM) \
+				$$_PARALLELISM \
 				-env $(ENVIRONMENT) \
-				$$_VARS" || if [ "$$?" -eq 2 ]; then true; else "$$?"; fi
+				$$_VARS" || exit_code="$$?" ; \
+				if [ "$$exit_code" -eq 2 ]; \
+					then echo "${GREEN}Plan succeeded with changes${NC}" && true; \
+				else \
+				  exit $$exit_code; \
+				fi
 
 tags: _LEVEL=$(LEVEL)
 tags: _SOLUTION=$(SOLUTION)
@@ -175,4 +196,19 @@ destroy: _action ## Run `terraform destroy` using rover. Usage example: make des
 show: _ACTION=show
 show: _LEVEL=$(LEVEL)
 show: _SOLUTION=$(SOLUTION)
-show: _action ## Run `terraform show` using rover. Usage example: make show SOLUTION=application LEVEL=4
+show: _ADDRESS=$(ADDRESS)
+show: _action ## Run `terraform state show` using rover. Usage example: make show SOLUTION=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
+
+list: _ACTION=list
+list: _LEVEL=$(LEVEL)
+list: _SOLUTION=$(SOLUTION)
+list: _ADDRESS=$(ADDRESS)
+list: _action ## Run `terraform state list` using rover. Usage example: make show SOLUTION=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
+
+
+import: _ACTION=import
+import: _LEVEL=$(LEVEL)
+import: _SOLUTION=$(SOLUTION)
+import: _IMPORT=$(IMPORT)
+import: _ADDRESS=$(ADDRESS)
+import: _action ## Run `terraform import` using rover. Usage example: make import SOLUTION=launchpad LEVEL=0 IMPORT=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription ADDRESS=/providers/Microsoft.Subscription/aliases/connectivity
