@@ -47,8 +47,9 @@ runs:
       uses: actions/cache@v2
       with:
         path: |
-          $${{ env.TF_PLUGIN_CACHE_DIR }}
-        key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          ${{ env.TF_PLUGIN_CACHE_DIR }}
+          ${{ env.TF_DATA_DIR }}.terraform.lock.hcl
+        key: ${{ runner.os }}-terraform-${{ hashFiles('${{ env.TF_DATA_DIR }}/.terraform.lock.hcl') }}
         restore-keys: |
           ${{ runner.os }}-terraform-
     - uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
@@ -83,6 +84,10 @@ runs:
       env:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
+      shell: bash
+    - name: locate .terraform.lock.hcl
+      run: find . -name .terraform.lock.hcl
+      working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Logout service principal
       run: make logout
