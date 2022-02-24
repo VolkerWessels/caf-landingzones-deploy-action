@@ -52,6 +52,9 @@ runs:
         key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}
         restore-keys: |
           ${{ runner.os }}-terraform-
+    - name: list cache
+      run: cd ${{ env.TF_PLUGIN_CACHE_DIR }} && ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
+      shell: bash
     - uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
         if: ${{ inputs.action == 'apply' }}
