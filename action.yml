@@ -48,7 +48,7 @@ runs:
       with:
         path: |
           ${{ env.TF_PLUGIN_CACHE_DIR }}
-          $(dirname ${{ env.GITHUB_ACTION_PATH }} }})/landingzones/**/.terraform.lock.hcl
+          ${{ env.BASE_PATH}}/landingzones/**/.terraform.lock.hcl
         key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}
         restore-keys: |
           ${{ runner.os }}-terraform-
@@ -84,10 +84,6 @@ runs:
       env:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
-      shell: bash
-    - name: locate .terraform.lock.hcl
-      run: find $(dirname ${{ env.TFVARS_PATH }})/landingzones -name .terraform.lock.hcl
-      working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Logout service principal
       run: make logout
