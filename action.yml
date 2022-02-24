@@ -49,12 +49,9 @@ runs:
         path: |
           ${{ env.TF_PLUGIN_CACHE_DIR }}
           ${GITHUB_WORKSPACE}/landingzones/**/.terraform.lock.hcl
-        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${{ env.GITHUB_WORKSPACE }}/landingzones/**/.terraform.lock.hcl') }}
+        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${GITHUB_WORKSPACE}/landingzones/**/.terraform.lock.hcl') }}
         restore-keys: |
           ${{ runner.os }}-terraform-
-    - name: list cache
-      run: cd ${GITHUB_WORKSPACE} && ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
-      shell: bash
     - uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
         if: ${{ inputs.action == 'apply' }}
@@ -87,6 +84,11 @@ runs:
       env:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
+      shell: bash
+    - name: list cache
+      run: |
+        cd ${GITHUB_WORKSPACE}/landingzones && ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'; 
+        find . -name .terraform.lock.hcl || true
       shell: bash
     - name: Logout service principal
       run: make logout
