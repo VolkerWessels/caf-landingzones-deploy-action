@@ -40,7 +40,7 @@ runs:
         echo "TFVARS_PATH=${{ inputs.config_dir }}" >> $GITHUB_ENV;
         echo "BASE_PATH=$(dirname ${{ inputs.config_dir }})" >> $GITHUB_ENV;
         echo "TF_PLUGIN_CACHE_DIR=/home/${USER}/plugin-cache" >> $GITHUB_ENV;
-        echo "TF_DATA_DIR: "/home/${USER}" >> $GITHUB_ENV;
+        echo "TF_DATA_DIR=/home/${USER}" >> $GITHUB_ENV;
       shell: bash
     - name: Terraform Cache
       id: terraform-cache
