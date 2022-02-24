@@ -49,7 +49,7 @@ runs:
         path: |
           ${{ env.TF_PLUGIN_CACHE_DIR }}
           $(dirname ${{ env.TFVARS_PATH }})/landingzones/**/.terraform.lock.hcl
-        key: ${{ runner.os }}-terraform-${{ hashFiles('$(dirname ${{ env.TFVARS_PATH }})/landingzones/**/.terraform.lock.hcl') }}
+        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}
         restore-keys: |
           ${{ runner.os }}-terraform-
     - uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
