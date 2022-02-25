@@ -98,6 +98,5 @@ runs:
             name: terraform-${{ env.LANDINGZONE_NAME }}-plan
             path: |
               ${{ env.BASE_PATH }}/*.tfplan
-              ${{ env.BASE_PATH }}/${{ inputs.action }}.log
             if-no-files-found: error
 
