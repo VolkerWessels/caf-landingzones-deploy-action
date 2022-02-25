@@ -57,7 +57,7 @@ runs:
         path: |
           ${{ env.TF_PLUGIN_CACHE_DIR }}
           ${GITHUB_WORKSPACE}/configuration/landingzones/**/.terraform.lock.hcl
-        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${{ env.TF_DATA_DIR }}/configuration/landingzones/${{ env.LANDINGZONE_NAME }}/.terraform.lock.hcl') }}
+        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${{ env.BASE_PATH }}/*.tfplan') }}
         restore-keys: |
           ${{ runner.os }}-terraform-
     - name: Install landingzones
@@ -85,11 +85,6 @@ runs:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
-    - name: list cache
-      run: |
-        apt install -y tree && cd ${GITHUB_WORKSPACE}/configuration/landingzones/${{ env.LANDINGZONE_NAME }}/ && tree -a;
-        cp $(find . -name .terraform.lock.hcl) ${{ env.BASE_PATH }}.terraform.lock.hcl
-      shell: bash
     - name: Logout service principal
       run: make logout
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
@@ -104,6 +99,5 @@ runs:
             name: terraform-${{ env.LANDINGZONE_NAME }}-plan
             path: |
               ${{ env.BASE_PATH }}/*.tfplan
-              ${{ env.BASE_PATH }}/.terraform.lock.hcl
             if-no-files-found: error
 
