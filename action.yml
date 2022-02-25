@@ -78,7 +78,7 @@ runs:
       shell: bash
     - name: Run ${{ inputs.action }}
       id: solution-deployment
-      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} 2>&1 | tee ${{ inputs.action }}.log
+      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} 2>&1 | tee ${{ env.BASE_PATH }}/${{ inputs.action }}.log
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         PREFIX: ${{ inputs.prefix }}
@@ -99,4 +99,16 @@ runs:
             path: |
               ${{ env.BASE_PATH }}/*.tfplan
             if-no-files-found: error
+    - name: Store tfplan
+      uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
+      with:
+        if: startsWith( env.TF_LOG, 'DEBUG' )
+        step: |
+          uses: actions/upload-artifact@v2
+          with:
+            name: terraform-${{ env.LANDINGZONE_NAME }}-debug
+            path: |
+              ${{ env.BASE_PATH }}/*.log
+            if-no-files-found: warn
+            retention-days: 5
 
