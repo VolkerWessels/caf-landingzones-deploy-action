@@ -98,17 +98,6 @@ runs:
             name: terraform-${{ env.LANDINGZONE_NAME }}-plan
             path: |
               ${{ env.BASE_PATH }}/*.tfplan
+              ${{ env.BASE_PATH }}/${{ inputs.action }}.log
             if-no-files-found: error
-    - name: Store tfplan
-      uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
-      with:
-        if: startsWith( env.TF_LOG, 'DEBUG' )
-        step: |
-          uses: actions/upload-artifact@v2
-          with:
-            name: terraform-${{ env.LANDINGZONE_NAME }}-debug
-            path: |
-              ${{ env.BASE_PATH }}/*.log
-            if-no-files-found: warn
-            retention-days: 5
 
