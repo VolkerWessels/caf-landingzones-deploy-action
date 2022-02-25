@@ -84,10 +84,6 @@ runs:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
-    - name: list cache
-      run: |
-        apt install -y tree && cd ${{ env.BASE_PATH }} && tree -a;
-      shell: bash
     - name: Logout service principal
       run: make logout
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
