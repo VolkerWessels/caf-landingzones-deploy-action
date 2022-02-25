@@ -62,7 +62,7 @@ TF_VAR_workspace?=$(_TF_VAR_workspace)### Terraform workspace. Defaults to`tfsta
 _TF_LOG:=ERROR
 TF_LOG?=$(_TF_LOG)### Terraform logging. Defaults to`ERROR`.
 
-_TF_LOG_PATH:=./terraform.log
+_TF_LOG_PATH:=$(_BASE_DIR)/terraform.log
 TF_LOG_PATH?=$(_TF_LOG_PATH)### Terraform log outputfile. Defaults to`./terraform.log`.
 
 _TF_INPUT:="false"
