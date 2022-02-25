@@ -56,9 +56,9 @@ runs:
       with:
         path: |
           ${{ env.TF_PLUGIN_CACHE_DIR }}
-        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('${{ env.BASE_PATH }}/*.tfplan') }}
+        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${ GITHUB_RUN_ID}
         restore-keys: |
-          ${{ runner.os }}-terraform-
+          ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}
     - name: Install landingzones
       run: make landingzones
       shell: bash
@@ -78,7 +78,7 @@ runs:
       shell: bash
     - name: Run ${{ inputs.action }}
       id: solution-deployment
-      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} 2>&1 | tee ${{ env.BASE_PATH }}/${{ inputs.action }}.log
+      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} 2>&1 | tee ${{ inputs.action }}.log
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         PREFIX: ${{ inputs.prefix }}
