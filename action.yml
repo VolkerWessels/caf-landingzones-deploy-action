@@ -92,6 +92,8 @@ runs:
         if: ${{ inputs.action == 'plan'}}
         step: |
           uses: actions/github-script@v6
+          env:
+            PLAN: ${{ env.SOLUTION_DEPLOYMENT_OUTPUT }}
           with:
             script: |
               const output = `#### Name: \`${{ inputs.landingzone }}\`
@@ -100,7 +102,7 @@ runs:
               <details><summary>Show Plan</summary>
               
               \`\`\`\n
-              ${process.env.SOLUTION_DEPLOYMENT_OUTPUT}
+              ${process.env.PLAN}
               \`\`\`
               
               </details>
