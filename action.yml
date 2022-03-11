@@ -83,8 +83,8 @@ runs:
       id: solution-deployment
       run: |
         make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} | tee ${{ inputs.landingzone }}.log;
-        OUTPUT="$(sed -n --expression='/Terraform will perform the following actions:/,$p' ${{ inputs.landingzone }}.log)";
-        echo -n "SOLUTION_DEPLOYMENT_OUTPUT=${OUTPUT}" >> $GITHUB_ENV;
+        OUTPUT=$(sed -n --expression='/Terraform will perform the following actions:/,$p' ${{ inputs.landingzone }}.log | base64 );
+        echo "SOLUTION_DEPLOYMENT_OUTPUT=${OUTPUT}" >> $GITHUB_ENV;
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         PREFIX: ${{ inputs.prefix }}
@@ -98,16 +98,17 @@ runs:
         step: |
           uses: actions/github-script@v6
           env:
-            PLAN: ${{ env.SOLUTION_DEPLOYMENT_OUTPUT }}
+            PLAN: $( echo -n "${{ env.SOLUTION_DEPLOYMENT_OUTPUT }}" | base64 -w 0)
           with:
             script: |
+              const { PLAN } = process.env
               const output = `#### Name: \`${{ inputs.landingzone }}\`
               #### Terraform Plan 📖\`${{ steps.solution-deployment.outcome }}\`
               
               <details><summary>Show Plan</summary>
               
               \`\`\`\n
-              ${process.env.PLAN}
+              ${PLAN}
               \`\`\`
               
               </details>
