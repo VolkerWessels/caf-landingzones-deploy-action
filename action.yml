@@ -81,7 +81,7 @@ runs:
       shell: bash
     - name: Run ${{ inputs.action }}
       id: solution-deployment
-      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} | tee -i ${{ inputs.landingzone }}-${{ inputs.action }}.log
+      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} | tee -i ${{ env.BASE_PATH }}/${{ inputs.landingzone }}-${{ inputs.action }}.log
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         PREFIX: ${{ inputs.prefix }}
@@ -95,9 +95,8 @@ runs:
         if: ${{ inputs.action == 'plan'}}
         step: |
           shell: bash
-          working-directory: ${{ env.GITHUB_ACTION_PATH }}
           run: |
-            sed -n '/Terraform will perform the following actions:/,$p' ${{ inputs.landingzone }}-${{ inputs.action }}.log
+            sed -n '/Terraform will perform the following actions:/,$p' ${{ env.BASE_PATH }}/${{ inputs.landingzone }}-${{ inputs.action }}.log
     - name: Update Pull Request
       uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
