@@ -78,21 +78,14 @@ runs:
       shell: bash
     - name: Run ${{ inputs.action }}
       id: solution-deployment
-      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} | tee -i ${{ env.BASE_PATH }}/${{ inputs.landingzone }}-${{ inputs.action }}.log
+      run: |
+        make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} |& tee -i ${{ env.BASE_PATH }}/${{ inputs.landingzone }}-${{ inputs.action }}.log;
+        sed -n '/Terraform will perform the following actions:/,$p' ${{ env.BASE_PATH }}/${{ inputs.landingzone }}-${{ inputs.action }}.log
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
-    - name: Parse plan output
-      id: plan
-      uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
-      with:
-        if: ${{ inputs.action == 'plan'}}
-        step: |
-          shell: bash
-          run: |
-            sed -n '/Terraform will perform the following actions:/,$p' ${{ env.BASE_PATH }}/${{ inputs.landingzone }}-${{ inputs.action }}.log
     - name: Update Pull Request
       uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
       with:
@@ -100,7 +93,7 @@ runs:
         step: |
           uses: actions/github-script@v6
           env: 
-            plan: PLAN: "${{ steps.plan.outputs.stdout }}"
+            plan: PLAN: "${{ steps.solution-deployment.outputs.stdout }}"
           with:
             script: |
               const output = `#### Name: \`${{ inputs.landingzone }}\`
