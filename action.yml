@@ -84,7 +84,7 @@ runs:
       run: |
         make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} | tee ${{ inputs.landingzone }}.log;
         OUTPUT="$(sed -n --expression='/Terraform will perform the following actions:/,$p' ${{ inputs.landingzone }}.log)";
-        echo "SOLUTION_DEPLOYMENT_OUTPUT=${OUTPUT}" >> $GITHUB_ENV;
+        echo -n "SOLUTION_DEPLOYMENT_OUTPUT=${OUTPUT}" >> $GITHUB_ENV;
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         PREFIX: ${{ inputs.prefix }}
