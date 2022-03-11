@@ -91,7 +91,7 @@ runs:
       shell: bash
     - name: Action output
       run: |
-        echo "SOLUTION_DEPLOYMENT_OUTPUT=$( echo ${{ steps.solution-deployment.outputs.stdout }} | sed -n --expression='/Terraform will perform the following actions:/,$p')" >> $GITHUB_ENV;
+        echo "SOLUTION_DEPLOYMENT_OUTPUT=$( echo -n "${{ steps.solution-deployment.outputs.stdout }}" | sed -n --expression='/Terraform will perform the following actions:/,$p')" >> $GITHUB_ENV;
       shell: bash
     - name: Update Pull Request
       uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
@@ -114,7 +114,7 @@ runs:
               
               *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
               
-              github.issues.createComment({
+              github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
