@@ -151,6 +151,7 @@ _action:
 				-tfstate $(_TFSTATE).tfstate \
 				$$_PARALLELISM \
 				-env $(ENVIRONMENT) \
+				-no-color \
 				$$_VARS" || exit_code="$$?" ; \
 				if [ "$$exit_code" -eq 2 ]; \
 					then echo -e "${GREEN}Plan succeeded with changes${NC}" && true; \

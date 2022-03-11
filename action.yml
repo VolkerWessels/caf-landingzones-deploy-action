@@ -81,13 +81,50 @@ runs:
       shell: bash
     - name: Run ${{ inputs.action }}
       id: solution-deployment
-      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
+      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} | tee -i ${{ inputs.landingzone }}-${{ inputs.action }}.log
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         PREFIX: ${{ inputs.prefix }}
         DEFAULT_PREFIX: ${{ inputs.default_prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
+    - name: Parse plan output
+      id: plan
+      uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
+      with:
+        if: ${{ inputs.action == 'plan'}}
+        step: |
+          run: |
+            sed -n '/Terraform will perform the following actions:/,$p' ${{ inputs.landingzone }}-${{ inputs.action }}.log
+    - name: Update Pull Request
+      uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
+      with:
+        if: ${{ inputs.action == 'plan'}}
+        step: |
+          uses: actions/github-script@v6
+          env: 
+            plan: PLAN: "${{ steps.plan.outputs.stdout }}"
+          with:
+            script: |
+              const output = `#### Name: \`${{ inputs.landingzone }}\`
+              #### Terraform Plan 📖\`${{ steps.solution-deployment.outcome }}\`
+              
+              <details><summary>Show Plan</summary>
+              
+              \`\`\`\n
+              ${process.env.PLAN}
+              \`\`\`
+              
+              </details>
+              
+              *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+              
+              github.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: output
+              })
     - name: Logout service principal
       run: make logout
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
@@ -103,4 +140,4 @@ runs:
             path: |
               ${{ env.BASE_PATH }}/*.tfplan
             if-no-files-found: error
-
+    
