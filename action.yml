@@ -95,6 +95,7 @@ runs:
         if: ${{ inputs.action == 'plan'}}
         step: |
           shell: bash
+          working-directory: ${{ env.GITHUB_ACTION_PATH }}
           run: |
             sed -n '/Terraform will perform the following actions:/,$p' ${{ inputs.landingzone }}-${{ inputs.action }}.log
     - name: Update Pull Request
