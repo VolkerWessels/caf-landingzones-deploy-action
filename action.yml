@@ -90,22 +90,23 @@ runs:
       shell: bash
     - name: Update Pull Request
       uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
+      env:
+        SOLUTION_DEPLOYMENT_OUTPUT: ${{ env.SOLUTION_DEPLOYMENT_OUTPUT }}
       with:
         if: ${{ inputs.action == 'plan'}}
         step: |
           uses: actions/github-script@v6
           env:
-            PLAN: ${{ env.SOLUTION_DEPLOYMENT_OUTPUT }}
+            SOLUTION_DEPLOYMENT_OUTPUT: ${{ env.SOLUTION_DEPLOYMENT_OUTPUT }}
           with:
             script: |
-              const { PLAN } = process.env
               const output = `#### Name: \`${{ inputs.landingzone }}\`
               #### Terraform Plan 📖\`${{ steps.solution-deployment.outcome }}\`
               
               <details><summary>Show Plan</summary>
               
               \`\`\`\n
-              ${PLAN}
+              ${process.env.SOLUTION_DEPLOYMENT_OUTPUT}
               \`\`\`
               
               </details>
