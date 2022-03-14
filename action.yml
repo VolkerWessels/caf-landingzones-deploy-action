@@ -42,14 +42,12 @@ runs:
         echo "TF_DATA_DIR=${GITHUB_WORKSPACE}" >> $GITHUB_ENV;
         echo "TF_PLUGIN_CACHE_DIR=${GITHUB_WORKSPACE}/plugin-cache" >> $GITHUB_ENV;
       shell: bash
-    - uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
+    - name: Download artifacts if applicable
+      if: ${{ inputs.action == 'apply' }}
+      uses: actions/download-artifact@v2W
       with:
-        if: ${{ inputs.action == 'apply' }}
-        step: |
-          uses: actions/download-artifact@v2
-          with:
-            name: terraform-${{ env.LANDINGZONE_NAME }}-plan
-            path: ${{ env.BASE_PATH }}/
+        name: terraform-${{ env.LANDINGZONE_NAME }}-plan
+        path: ${{ env.BASE_PATH }}/
     - name: Terraform Cache
       id: terraform-cache
       uses: actions/cache@v2
@@ -89,49 +87,39 @@ runs:
         ENVIRONMENT: ${{ inputs.environment }}
       shell: bash
     - name: Update Pull Request
-      uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
-      env:
-        SOLUTION_DEPLOYMENT_OUTPUT: ${{ env.SOLUTION_DEPLOYMENT_OUTPUT }}
+      uses: actions/github-script@v6
+      if: ${{ inputs.action == 'plan'}}
       with:
-        if: ${{ inputs.action == 'plan'}}
-        step: |
-          uses: actions/github-script@v6
-          env:
-            SOLUTION_DEPLOYMENT_OUTPUT: ${{ env.SOLUTION_DEPLOYMENT_OUTPUT }}
-          with:
-            script: |
-              const output = `#### Name: \`${{ inputs.landingzone }}\`
-              #### Terraform Plan 📖\`${{ steps.solution-deployment.outcome }}\`
-              
-              <details><summary>Show Plan</summary>
-              
-              \`\`\`\n
-              ${process.env.SOLUTION_DEPLOYMENT_OUTPUT}
-              \`\`\`
-              
-              </details>
-              
-              *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-              
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: output
-              })
+        script: |
+          const output = `#### Name: \`${{ inputs.landingzone }}\`
+          #### Terraform Plan 📖\`${{ steps.solution-deployment.outcome }}\`
+          
+          <details><summary>Show Plan</summary>
+          
+          \`\`\`\n
+          ${process.env.SOLUTION_DEPLOYMENT_OUTPUT}
+          \`\`\`
+          
+          </details>
+          
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
     - name: Logout service principal
       run: make logout
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Store tfplan
-      uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
+      if: ${{ inputs.action == 'plan'}}
+      uses: actions/upload-artifact@v2
       with:
-        if: ${{ inputs.action == 'plan'}}
-        step: |
-          uses: actions/upload-artifact@v2
-          with:
-            name: terraform-${{ env.LANDINGZONE_NAME }}-plan
-            path: |
-              ${{ env.BASE_PATH }}/*.tfplan
-            if-no-files-found: error
+        name: terraform-${{ env.LANDINGZONE_NAME }}-plan
+        path: |
+          ${{ env.BASE_PATH }}/*.tfplan
+        if-no-files-found: error
     
