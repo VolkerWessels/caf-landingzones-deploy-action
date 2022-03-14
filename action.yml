@@ -47,7 +47,7 @@ runs:
       shell: bash
     - name: Download artifacts if applicable
       if: ${{ inputs.action == 'apply' }}
-      uses: actions/download-artifact@v2W
+      uses: actions/download-artifact@v2
       with:
         name: terraform-${{ env.LANDINGZONE_NAME }}-plan
         path: ${{ env.BASE_PATH }}/
