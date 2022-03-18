@@ -54,7 +54,7 @@ runs:
       with:
         path: |
           ${{ env.TF_PLUGIN_CACHE_DIR }}
-        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${ GITHUB_RUN_ID}
+        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ github.run_id }}
         restore-keys: |
           ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}
     - name: Install landingzones
