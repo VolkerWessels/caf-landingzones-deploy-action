@@ -94,6 +94,10 @@ login: ## Login to azure using a service principal
 	else \
 		echo -e "${RED}No subscription set!${NC}"; exit 1;
 	fi
+	if [ -v ELEVATE ]; then \
+		echo -e "${LIGHTGREEN}Elevating to root tenant!${NC}"; \
+		az rest --method post --url "/providers/Microsoft.Authorization/elevateAccess?api-version=2016-07-01";
+	fi
 	@echo -e "${LIGHTGREEN}Logged in to $$(az account show --query 'name')${NC}"; \
 
 logout: ## Logout service principal
