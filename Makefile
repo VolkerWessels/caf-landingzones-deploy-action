@@ -28,7 +28,7 @@ MAKEFLAGS += --no-print-directory
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-.PHONY: help info landingzones login logout formatting solution_check _action validate init plan apply destroy tags show list import
+.PHONY: help info landingzones login logout formatting solution_check _action validate init plan apply destroy tags show list import tfstate spkvurl
 
 help:
 	@echo "Please use 'make [<arg1=a> <argN=...>] <target>' where <target> is one of"
