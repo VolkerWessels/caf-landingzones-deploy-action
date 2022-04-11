@@ -51,7 +51,7 @@ ENVIRONMENT := $(shell echo $(ENVIRONMENT) | tr '[:upper:]' '[:lower:]')### Envi
 
 _PREFIX:=g$(GITHUB_RUN_ID)
 PREFIX?=$(_PREFIX)
-PREFIX?=$(shell echo $(PREFIX)|tr '[:upper:]' '[:lower:]')### Prefix azure resource naming.
+PREFIX?=$(shell if [ -z "$$PREFIX"]; then $(PREFIX); else $(DEFAULT_PREFIX); fi | tr '[:upper:]' '[:lower:]')### Prefix azure resource naming.
 
 _IMPORT=""
 _ADDRESS=""
