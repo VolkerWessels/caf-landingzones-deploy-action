@@ -68,6 +68,12 @@ TF_LOG_PATH?=$(_TF_LOG_PATH)### Terraform log outputfile. Defaults to`./terrafor
 _TF_INPUT:="false"
 TF_INPUT=?=$(_TF_INPUT)### Causes terraform commands to behave as if the -input=false. Defaults to`false`.
 
+_SPKVURL = ""
+SPKVURL?=$(_SPKVURL)### Impersonate keyvault URL. Defaults to none.
+
+_TFSTATE = $(shell basename $(_SOLUTION))
+TFSTATE?=$(_TFSTATE)### Terraform logging. Defaults to SOLUTION name.
+
 landingzones: ## Install caf-terraform-landingzones
 	@echo -e "${LIGHTGRAY}TFVARS_PATH:		$(TFVARS_PATH)${NC}"
 	@echo -e "${LIGHTGRAY}LANDINGZONES_DIR:	$(LANDINGZONES_DIR)${NC}"
@@ -121,10 +127,6 @@ _workspace:
 		"/tf/rover/rover.sh -env $(ENVIRONMENT) workspace create $(TF_VAR_workspace)"
 
 _action: _ADD_ON = "caf_solution/"
-_action: _TFSTATE = $(shell basename $(_SOLUTION))
-_action: TFSTATE?=$(_TFSTATE)### Terraform logging. Defaults to SOLUTION name.
-_action: _SPKVURL = ""
-_action: SPKVURL?=$(_SPKVURL)### Impersonate keyvault URL. Defaults to none.
 _action: _VAR_FOLDERS= $(shell find $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION) -type d -print0 | xargs -0 -I '{}' sh -c "printf -- '-var-folder %s \ \n' '{}';" )
 _action:
 	@echo -e "${LIGHTGRAY}$$(cd $(_BASE_DIR) && pwd)${NC}"
