@@ -154,7 +154,7 @@ _action:
 			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
 				$$_VAR_FOLDERS \
 				-level $$_LEVEL \
-				-tfstate $(_TFSTATE).tfstate \
+				-tfstate $(TFSTATE).tfstate \
 				$$_PARALLELISM \
 				-env $(ENVIRONMENT) \
 				$$_VARS" || exit_code="$$?" ; \
