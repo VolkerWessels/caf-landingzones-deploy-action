@@ -83,6 +83,8 @@ runs:
       env:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
+        TFSTATE: ${{ inputs.tfstate }}
+        SPKVURL: ${{ inputs.spkvurl }}
       shell: bash
     - name: Logout service principal
       run: make logout

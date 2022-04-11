@@ -122,6 +122,9 @@ _workspace:
 
 _action: _ADD_ON = "caf_solution/"
 _action: _TFSTATE = $(shell basename $(_SOLUTION))
+_action: TFSTATE?=$(_TFSTATE)### Terraform logging. Defaults to SOLUTION name.
+_action: _SPKVURL = ""
+_action: SPKVURL?=$(_SPKVURL)### Impersonate keyvault URL. Defaults to none.
 _action: _VAR_FOLDERS= $(shell find $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION) -type d -print0 | xargs -0 -I '{}' sh -c "printf -- '-var-folder %s \ \n' '{}';" )
 _action:
 	@echo -e "${LIGHTGRAY}$$(cd $(_BASE_DIR) && pwd)${NC}"
@@ -142,6 +145,7 @@ _action:
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
 	if [ "$(_ACTION)" == "show" ] || [ "$(_ACTION)" == "list" ]; then _ACTION="state\ $(_ACTION)" _VARS="$(_ADDRESS)" _VAR_FOLDERS="" _PARALLELISM=""; fi
 	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} You cannot destroy landingzones using the deploy action, use the caf-landingzones-destroy-action instead ${NC}" && exit; fi
+	if [ "$(SPKVURL)" == "" ]; then _ACTION="$(_ACTION)"; else _ACTION="$(_ACTION) --impersonate-sp-from-keyvault-url $(SPKVURL)"; fi 
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$${_SOLUTION}"; fi
 	exit_code=0; \
 	/bin/bash -c \
