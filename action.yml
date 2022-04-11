@@ -29,6 +29,12 @@ inputs:
   tags:
     description: 'Json string of tags to import'
     required: false
+  tfstate:
+    description: 'File name for tfstate'
+    required: false
+  spkvurl:
+    description: 'Keyvault url for service principal impersonation'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -85,6 +91,8 @@ runs:
       env:
         PREFIX: ${{ inputs.prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
+        TFSTATE: ${{ inputs.tfstate }}
+        SPKVURL: ${{ inputs.spkvurl }}
       shell: bash
     - name: Update Pull Request
       uses: actions/github-script@v6
