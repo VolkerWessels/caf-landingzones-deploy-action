@@ -26,6 +26,12 @@ inputs:
   subscription_name:
     description: 'Name of the subscription the landingzone should be deployed in'
     required: false
+  tfstate:
+    description: 'Terraform state name'
+    required: false
+  spkvurl:
+    description: 'Keyvault URL containing SP credentials for Rover impersonation'
+    required: false
   tags:
     description: 'Json string of tags to import'
     required: false
