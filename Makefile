@@ -170,9 +170,9 @@ tags: ## Generate tags.tfvars.json for LANDINGZONE. Usage example: make tags TAG
 	if [ -z "$$_TAGS" ]; then _TAGS="{ LANDINGZONE:, level: }"; fi
 	JSON=$$(echo -e "$$_TAGS" | \
 			yq -S --indent 2 \
-				--arg landingzone "$(_LANDINGZONE)" \
+				--arg LANDINGZONE "$(_LANDINGZONE)" \
 				--arg level "level$(_LEVEL)" \
-				'. + { landingzone: $$LANDINGZONE, level: $$level } | {tags: . }' - \
+				'. + { LANDINGZONE: $$LANDINGZONE, level: $$level } | {tags: . }' - \
 		)
 	echo -e "$$JSON" > $(TFVARS_PATH)/level$(_LEVEL)/$(_LANDINGZONE)/tags.tfvars.json
 	echo -e "${GREEN}Succesfully generated:\n\t$(TFVARS_PATH)/level$(_LEVEL)/$(_LANDINGZONE)/tags.tfvars.json${NC}"
@@ -220,6 +220,7 @@ list: _LANDINGZONE=$(LANDINGZONE)
 list: _ADDRESS=$(ADDRESS)
 list: _SOLUTION=$(SOLUTION)"
 list: _action ## Run `terraform state list` using rover. Usage example: make show LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
+
 
 import: _ACTION=import
 import: _LEVEL=$(LEVEL)
