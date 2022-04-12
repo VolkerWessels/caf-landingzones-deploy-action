@@ -143,6 +143,7 @@ _action:
 	_PARALLELISM="-parallelism $(PARALLELISM)"
 	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
 	if [ "$(SOLUTION)" == "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
+	echo -e "${RED} Using Solution $(SOLUTION)${NC}"
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
