@@ -38,6 +38,9 @@ inputs:
   solution:
     description: 'caf_landingzones logic to use'
     required: false
+  disablevmextensions: 
+    description: 'disable vm and vmss extensions in the landingzone to speed up the run'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -97,6 +100,7 @@ runs:
         TFSTATE: ${{ inputs.tfstate }}
         SPKVURL: ${{ inputs.spkvurl }}
         SOLUTION: ${{ inputs.solution }}
+        DISABLEVMEXTENSIONS: ${{ inputs.disablevmextensions }}
       shell: bash
     - name: Update Pull Request
       uses: actions/github-script@v6
