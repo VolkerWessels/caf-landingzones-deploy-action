@@ -137,6 +137,7 @@ _action:
 	_ADDRESS=$(_ADDRESS)
 	_VAR_FOLDERS="$(_VAR_FOLDERS)"
 	_PARALLELISM="-parallelism $(PARALLELISM)"
+	_SOLUTION="$(_SOLUTION)"
 	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
 	if [ "$(_SOLUTION)" == "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
 	echo -e "${RED} Using Solution $(_SOLUTION)${NC}"
