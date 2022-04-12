@@ -138,8 +138,8 @@ _action:
 	_VAR_FOLDERS="$(_VAR_FOLDERS)"
 	_PARALLELISM="-parallelism $(PARALLELISM)"
 	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
-	if [ "$(SOLUTION)" == "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
-	echo -e "${RED} Using Solution $(SOLUTION)${NC}"
+	if [ "$(_SOLUTION)" == "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
+	echo -e "${RED} Using Solution $(_SOLUTION)${NC}"
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
@@ -148,7 +148,7 @@ _action:
 	if [ "$(SPKVURL)" != "" ]; then echo -e "${GREEN} impersonating using $(SPKVURL)${NC}"; _PARALLELISM="$$_PARALLELISM --impersonate-sp-from-keyvault-url $(SPKVURL)"; fi
 	exit_code=0; \
 	/bin/bash -c \
-			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$(SOLUTION) -a $$_ACTION \
+			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_SOLUTION -a $$_ACTION \
 				$$_VAR_FOLDERS \
 				-level $$_LEVEL \
 				-tfstate $(TFSTATE).tfstate \
