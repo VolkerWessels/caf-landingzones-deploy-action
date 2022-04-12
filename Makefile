@@ -146,7 +146,7 @@ _action:
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
 	if [ "$(_ACTION)" == "show" ] || [ "$(_ACTION)" == "list" ]; then _ACTION="state\ $(_ACTION)" _VARS="$(_ADDRESS)" _VAR_FOLDERS="" _PARALLELISM=""; fi
 	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} You cannot destroy landingzones using the deploy action, use the caf-landingzones-destroy-action instead ${NC}" && exit; fi
-	if [ "$(SPKVURL)" != "" ]; then _PARALLELISM="$(_PARALLELISM) --impersonate-sp-from-keyvault-url $(SPKVURL)"; fi
+	if [ "$(SPKVURL)" != "" ]; then echo -e "${GREEN} impersonating using $(SPKVURL)${NC}"; _PARALLELISM=="$$_PARALLELISM --impersonate-sp-from-keyvault-url $(SPKVURL)"; fi
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$${_SOLUTION}"; fi
 	exit_code=0; \
 	/bin/bash -c \
