@@ -75,6 +75,10 @@ ifndef SOLUTION
 override SOLUTION = "caf_solution"
 endif
 
+ifndef TFSTATE
+override TFSTATE = $(shell basename $(_LANDINGZONE))
+endif
+
 landingzones: ## Install caf-terraform-landingzones
 	@echo -e "${LIGHTGRAY}TFVARS_PATH:		$(TFVARS_PATH)${NC}"
 	@echo -e "${LIGHTGRAY}LANDINGZONES_DIR:	$(LANDINGZONES_DIR)${NC}"
@@ -123,8 +127,6 @@ _workspace:
 	/bin/bash -c \
 		"/tf/rover/rover.sh -env $(ENVIRONMENT) workspace create $(TF_VAR_workspace)"
 
-_action: _TFSTATE = $(shell basename $(_LANDINGZONE))
-_action: TFSTATE?=$(_TFSTATE)### Terraform logging. Defaults to LANDINGZONE name.
 _action: _VAR_FOLDERS= $(shell find $(TFVARS_PATH)/level$(_LEVEL)/$(_LANDINGZONE) -type d -print0 | xargs -0 -I '{}' sh -c "printf -- '-var-folder %s \ \n' '{}';" )
 _action:
 	@echo -e "${LIGHTGRAY}$$(cd $(_BASE_DIR) && pwd)${NC}"
@@ -141,7 +143,6 @@ _action:
 	_SOLUTION="$(_SOLUTION)"
 	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
 	if [ "$(_SOLUTION)" == "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
-	echo -e "${RED} Using Solution $(_SOLUTION)${NC}"
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
