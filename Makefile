@@ -180,11 +180,13 @@ tags: ## Generate tags.tfvars.json for LANDINGZONE. Usage example: make tags TAG
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
 validate: _LANDINGZONE=$(LANDINGZONE)
+validate: _SOLUTION=$(SOLUTION)
 validate: _action ## Run `terraform validate` using rover. Usage example: make validate LANDINGZONE=add-ons/eslz LEVEL=1
 
 init: _ACTION=init
 init: _LEVEL=$(LEVEL)
 init: _LANDINGZONE=$(LANDINGZONE)
+init: _SOLUTION=$(SOLUTION)
 init: _action ## Run `terraform init` using rover. Usage example: make init LANDINGZONE=launchpad LEVEL=0
 
 plan: _ACTION=plan
@@ -196,23 +198,27 @@ plan: _action ## Run `terraform plan` using rover. Usage example: make plan LAND
 apply: _ACTION=apply
 apply: _LEVEL=$(LEVEL)
 apply: _LANDINGZONE=$(LANDINGZONE)
+apply: _SOLUTION=$(SOLUTION)
 apply: _action ## Run `terraform apply` using rover. Usage example: make apply LANDINGZONE=networking LEVEL=2
 
 destroy: _ACTION=destroy
 destroy: _LEVEL=$(LEVEL)
-destroy: _LANDINGZONE=$(LANDINGZONE)
+destroy: _LANDINGZONE=$(LANDINGZONE)"
+destroy: _SOLUTION=$(SOLUTION)"
 destroy: _action ## Run `terraform destroy` using rover. Usage example: make destroy LANDINGZONE=application LEVEL=4
 
 show: _ACTION=show
 show: _LEVEL=$(LEVEL)
 show: _LANDINGZONE=$(LANDINGZONE)
 show: _ADDRESS=$(ADDRESS)
+show: _SOLUTION=$(SOLUTION)"
 show: _action ## Run `terraform state show` using rover. Usage example: make show LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
 
 list: _ACTION=list
 list: _LEVEL=$(LEVEL)
 list: _LANDINGZONE=$(LANDINGZONE)
 list: _ADDRESS=$(ADDRESS)
+showy: _SOLUTION=$(SOLUTION)"
 list: _action ## Run `terraform state list` using rover. Usage example: make show LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
 
 
@@ -221,4 +227,5 @@ import: _LEVEL=$(LEVEL)
 import: _LANDINGZONE=$(LANDINGZONE)
 import: _IMPORT=$(IMPORT)
 import: _ADDRESS=$(ADDRESS)
+import: _SOLUTION=$(SOLUTION)"
 import: _action ## Run `terraform import` using rover. Usage example: make import LANDINGZONE=launchpad LEVEL=0 IMPORT=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription ADDRESS=/providers/Microsoft.Subscription/aliases/connectivity
