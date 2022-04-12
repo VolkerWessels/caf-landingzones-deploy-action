@@ -38,6 +38,9 @@ inputs:
   spkvurl:
     description: 'Keyvault url for service principal impersonation'
     required: false
+  add_on:
+    description: 'CAF add-on'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -97,6 +100,7 @@ runs:
         ENVIRONMENT: ${{ inputs.environment }}
         TFSTATE: ${{ inputs.tfstate }}
         SPKVURL: ${{ inputs.spkvurl }}
+        ADD_ON: ${{ inputs.add_on }}
       shell: bash
     - name: Update Pull Request
       uses: actions/github-script@v6
