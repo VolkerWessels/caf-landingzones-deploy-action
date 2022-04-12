@@ -176,7 +176,7 @@ tags: ## Generate tags.tfvars.json for LANDINGZONE. Usage example: make tags TAG
 			yq -S --indent 2 \
 				--arg LANDINGZONE "$(_LANDINGZONE)" \
 				--arg level "level$(_LEVEL)" \
-				'. + { LANDINGZONE: $$LANDINGZONE, level: $$level } | {tags: . }' - \
+				'. + { landingzone: $$LANDINGZONE, level: $$level } | {tags: . }' - \
 		)
 	echo -e "$$JSON" > $(TFVARS_PATH)/level$(_LEVEL)/$(_LANDINGZONE)/tags.tfvars.json
 	echo -e "${GREEN}Succesfully generated:\n\t$(TFVARS_PATH)/level$(_LEVEL)/$(_LANDINGZONE)/tags.tfvars.json${NC}"
