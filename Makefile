@@ -28,7 +28,7 @@ MAKEFLAGS += --no-print-directory
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-.PHONY: help info landingzones login logout formatting solution_check _action validate init plan apply destroy tags show list import
+.PHONY: help info landingzones login logout formatting LANDINGZONE_check _action validate init plan apply destroy tags show list import
 
 help:
 	@echo "Please use 'make [<arg1=a> <argN=...>] <target>' where <target> is one of"
@@ -70,6 +70,9 @@ TF_INPUT=?=$(_TF_INPUT)### Causes terraform commands to behave as if the -input=
 
 _SPKVURL:=""
 SPKVURL?=$(_SPKVURL)### Impersonate keyvault URL. Defaults to none.
+
+_SOLUTION:="caf_solution/"
+SOLUTION?=$(_SOLUTION) #default caf_solution
 
 landingzones: ## Install caf-terraform-landingzones
 	@echo -e "${LIGHTGRAY}TFVARS_PATH:		$(TFVARS_PATH)${NC}"
@@ -119,17 +122,15 @@ _workspace:
 	/bin/bash -c \
 		"/tf/rover/rover.sh -env $(ENVIRONMENT) workspace create $(TF_VAR_workspace)"
 
-_action: _ADD_ON:="caf_solution/"
-_action: ADD_ON?=$(_ADD_ON) #default caf_solution
-_action: _TFSTATE = $(shell basename $(_SOLUTION))
-_action: TFSTATE?=$(_TFSTATE)### Terraform logging. Defaults to SOLUTION name.
-_action: _VAR_FOLDERS= $(shell find $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION) -type d -print0 | xargs -0 -I '{}' sh -c "printf -- '-var-folder %s \ \n' '{}';" )
+_action: _TFSTATE = $(shell basename $(_LANDINGZONE))
+_action: TFSTATE?=$(_TFSTATE)### Terraform logging. Defaults to LANDINGZONE name.
+_action: _VAR_FOLDERS= $(shell find $(TFVARS_PATH)/level$(_LEVEL)/$(_LANDINGZONE) -type d -print0 | xargs -0 -I '{}' sh -c "printf -- '-var-folder %s \ \n' '{}';" )
 _action:
 	@echo -e "${LIGHTGRAY}$$(cd $(_BASE_DIR) && pwd)${NC}"
-	@echo -e "${GREEN}Terraform $(_ACTION) for '$(_SOLUTION) level$(_LEVEL)'${NC}"
+	@echo -e "${GREEN}Terraform $(_ACTION) for '$(_LANDINGZONE) level$(_LEVEL)'${NC}"
 	_ACTION=$(_ACTION)
-	_SOLUTION=$(_SOLUTION)
-	_PLAN="$(_BASE_DIR)/$(PREFIX)-$${_SOLUTION////-}.tfplan"
+	_LANDINGZONE=$(_LANDINGZONE)
+	_PLAN="$(_BASE_DIR)/$(PREFIX)-$${_LANDINGZONE////-}.tfplan"
 	_LEVEL="level$(_LEVEL)"
 	_VARS=""
 	_IMPORT=$(_IMPORT)
@@ -144,7 +145,6 @@ _action:
 	if [ "$(_ACTION)" == "show" ] || [ "$(_ACTION)" == "list" ]; then _ACTION="state\ $(_ACTION)" _VARS="$(_ADDRESS)" _VAR_FOLDERS="" _PARALLELISM=""; fi
 	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} You cannot destroy landingzones using the deploy action, use the caf-landingzones-destroy-action instead ${NC}" && exit; fi
 	if [ "$(SPKVURL)" != "" ]; then echo -e "${GREEN} impersonating using $(SPKVURL)${NC}"; _PARALLELISM="$$_PARALLELISM --impersonate-sp-from-keyvault-url $(SPKVURL)"; fi
-#	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$${_SOLUTION}"; fi
 	exit_code=0; \
 	/bin/bash -c \
 			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$ADD_ON -a $$_ACTION \
@@ -162,62 +162,63 @@ _action:
 				fi
 
 tags: _LEVEL=$(LEVEL)
-tags: _SOLUTION=$(SOLUTION)
+tags: _LANDINGZONE=$(LANDINGZONE)
 tags: _TAGS=$(TAGS)
-tags: ## Generate tags.tfvars.json for solution. Usage example: make tags TAGS=$(echo -e "OpCo: foo\nCostCenter: 0000" | base64)  LEVEL=1 SOLUTION=gitops
-	echo -e "${GREEN}Generating tags.tfvars.json for '$(_SOLUTION) level$(_LEVEL)'${NC}"
+tags: ## Generate tags.tfvars.json for LANDINGZONE. Usage example: make tags TAGS=$(echo -e "OpCo: foo\nCostCenter: 0000" | base64)  LEVEL=1 LANDINGZONE=gitops
+	echo -e "${GREEN}Generating tags.tfvars.json for '$(_LANDINGZONE) level$(_LEVEL)'${NC}"
 	_TAGS="$$(echo -n $(_TAGS) | base64 -d )"
-	if [ -z "$$_TAGS" ]; then _TAGS="{ solution:, level: }"; fi
+	if [ -z "$$_TAGS" ]; then _TAGS="{ LANDINGZONE:, level: }"; fi
 	JSON=$$(echo -e "$$_TAGS" | \
 			yq -S --indent 2 \
-				--arg solution "$(_SOLUTION)" \
+				--arg LANDINGZONE "$(_LANDINGZONE)" \
 				--arg level "level$(_LEVEL)" \
-				'. + { solution: $$solution, level: $$level } | {tags: . }' - \
+				'. + { LANDINGZONE: $$LANDINGZONE, level: $$level } | {tags: . }' - \
 		)
-	echo -e "$$JSON" > $(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json
-	echo -e "${GREEN}Succesfully generated:\n\t$(TFVARS_PATH)/level$(_LEVEL)/$(_SOLUTION)/tags.tfvars.json${NC}"
+	echo -e "$$JSON" > $(TFVARS_PATH)/level$(_LEVEL)/$(_LANDINGZONE)/tags.tfvars.json
+	echo -e "${GREEN}Succesfully generated:\n\t$(TFVARS_PATH)/level$(_LEVEL)/$(_LANDINGZONE)/tags.tfvars.json${NC}"
 
 validate: _ACTION=validate
 validate: _LEVEL=$(LEVEL)
-validate: _SOLUTION=$(SOLUTION)
-validate: _action ## Run `terraform validate` using rover. Usage example: make validate SOLUTION=add-ons/eslz LEVEL=1
+validate: _LANDINGZONE=$(LANDINGZONE)
+validate: _action ## Run `terraform validate` using rover. Usage example: make validate LANDINGZONE=add-ons/eslz LEVEL=1
 
 init: _ACTION=init
 init: _LEVEL=$(LEVEL)
-init: _SOLUTION=$(SOLUTION)
-init: _action ## Run `terraform init` using rover. Usage example: make init SOLUTION=launchpad LEVEL=0
+init: _LANDINGZONE=$(LANDINGZONE)
+init: _action ## Run `terraform init` using rover. Usage example: make init LANDINGZONE=launchpad LEVEL=0
 
 plan: _ACTION=plan
 plan: _LEVEL=$(LEVEL)
+plan: _LANDINGZONE=$(LANDINGZONE)
 plan: _SOLUTION=$(SOLUTION)
-plan: _action ## Run `terraform plan` using rover. Usage example: make plan SOLUTION=add-ons/gitops LEVEL=1
+plan: _action ## Run `terraform plan` using rover. Usage example: make plan LANDINGZONE=add-ons/gitops LEVEL=1
 
 apply: _ACTION=apply
 apply: _LEVEL=$(LEVEL)
-apply: _SOLUTION=$(SOLUTION)
-apply: _action ## Run `terraform apply` using rover. Usage example: make apply SOLUTION=networking LEVEL=2
+apply: _LANDINGZONE=$(LANDINGZONE)
+apply: _action ## Run `terraform apply` using rover. Usage example: make apply LANDINGZONE=networking LEVEL=2
 
 destroy: _ACTION=destroy
 destroy: _LEVEL=$(LEVEL)
-destroy: _SOLUTION=$(SOLUTION)
-destroy: _action ## Run `terraform destroy` using rover. Usage example: make destroy SOLUTION=application LEVEL=4
+destroy: _LANDINGZONE=$(LANDINGZONE)
+destroy: _action ## Run `terraform destroy` using rover. Usage example: make destroy LANDINGZONE=application LEVEL=4
 
 show: _ACTION=show
 show: _LEVEL=$(LEVEL)
-show: _SOLUTION=$(SOLUTION)
+show: _LANDINGZONE=$(LANDINGZONE)
 show: _ADDRESS=$(ADDRESS)
-show: _action ## Run `terraform state show` using rover. Usage example: make show SOLUTION=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
+show: _action ## Run `terraform state show` using rover. Usage example: make show LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
 
 list: _ACTION=list
 list: _LEVEL=$(LEVEL)
-list: _SOLUTION=$(SOLUTION)
+list: _LANDINGZONE=$(LANDINGZONE)
 list: _ADDRESS=$(ADDRESS)
-list: _action ## Run `terraform state list` using rover. Usage example: make show SOLUTION=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
+list: _action ## Run `terraform state list` using rover. Usage example: make show LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
 
 
 import: _ACTION=import
 import: _LEVEL=$(LEVEL)
-import: _SOLUTION=$(SOLUTION)
+import: _LANDINGZONE=$(LANDINGZONE)
 import: _IMPORT=$(IMPORT)
 import: _ADDRESS=$(ADDRESS)
-import: _action ## Run `terraform import` using rover. Usage example: make import SOLUTION=launchpad LEVEL=0 IMPORT=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription ADDRESS=/providers/Microsoft.Subscription/aliases/connectivity
+import: _action ## Run `terraform import` using rover. Usage example: make import LANDINGZONE=launchpad LEVEL=0 IMPORT=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription ADDRESS=/providers/Microsoft.Subscription/aliases/connectivity
