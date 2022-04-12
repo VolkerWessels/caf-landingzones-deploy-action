@@ -141,7 +141,8 @@ _action:
 	_ADDRESS=$(_ADDRESS)
 	_VAR_FOLDERS="$(_VAR_FOLDERS)"
 	_PARALLELISM="-parallelism $(PARALLELISM)"
-	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
+	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
+	if [ "$(_ADD_ON)"== "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
