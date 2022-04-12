@@ -123,7 +123,7 @@ _workspace:
 	/bin/bash -c \
 		"/tf/rover/rover.sh -env $(ENVIRONMENT) workspace create $(TF_VAR_workspace)"
 
-_action: _ADD_ON = "caf_solution/"
+_action: _ADD_ON:="caf_solution/"
 _action: ADD_ON?=$(_ADD_ON) #default caf_solution
 _action: _TFSTATE = $(shell basename $(_SOLUTION))
 _action: TFSTATE?=$(_TFSTATE)### Terraform logging. Defaults to SOLUTION name.
@@ -148,7 +148,7 @@ _action:
 	if [ "$(_ACTION)" == "show" ] || [ "$(_ACTION)" == "list" ]; then _ACTION="state\ $(_ACTION)" _VARS="$(_ADDRESS)" _VAR_FOLDERS="" _PARALLELISM=""; fi
 	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} You cannot destroy landingzones using the deploy action, use the caf-landingzones-destroy-action instead ${NC}" && exit; fi
 	if [ "$(SPKVURL)" != "" ]; then echo -e "${GREEN} impersonating using $(SPKVURL)${NC}"; _PARALLELISM="$$_PARALLELISM --impersonate-sp-from-keyvault-url $(SPKVURL)"; fi
-	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$${_SOLUTION}"; fi
+#	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$${_SOLUTION}"; fi
 	exit_code=0; \
 	/bin/bash -c \
 			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$ADD_ON -a $$_ACTION \
