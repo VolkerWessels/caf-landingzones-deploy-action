@@ -71,8 +71,9 @@ TF_INPUT=?=$(_TF_INPUT)### Causes terraform commands to behave as if the -input=
 _SPKVURL:=""
 SPKVURL?=$(_SPKVURL)### Impersonate keyvault URL. Defaults to none.
 
-_DEFAULT_SOLUTION:="caf_solution"
-SOLUTION?=$(_DEFAULT_SOLUTION) #default caf_solution
+ifndef SOLUTION
+override SOLUTION = "caf_solution"
+endif
 
 landingzones: ## Install caf-terraform-landingzones
 	@echo -e "${LIGHTGRAY}TFVARS_PATH:		$(TFVARS_PATH)${NC}"
