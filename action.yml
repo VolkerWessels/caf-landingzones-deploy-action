@@ -21,7 +21,7 @@ inputs:
     description: 'Default prefix of the resource name'
     required: false
   landingzone:
-    description: 'the segment (launchpad, solution or add-on) of a cloud environment to deploy'
+    description: 'the segment of a cloud environment to deploy'
     required: true
   level:
     description: 'Deploy level'
@@ -38,8 +38,8 @@ inputs:
   spkvurl:
     description: 'Keyvault url for service principal impersonation'
     required: false
-  add_on:
-    description: 'CAF add-on'
+  solution:
+    description: 'caf_landingzones logic to use'
     required: false
 runs:
   using: "composite"
@@ -83,13 +83,13 @@ runs:
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Create tags file with jq and move it to the solution folder
-      run: make tags TAGS=$( echo -n "${{ inputs.tags }}" | base64 -w 0) SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
+      run: make tags TAGS=$( echo -n "${{ inputs.tags }}" | base64 -w 0) LANDINGZONE=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Run ${{ inputs.action }}
       id: solution-deployment
       run: |
-        make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} | tee ${{ inputs.landingzone }}.log;
+        make ${{ inputs.action }} LANDINGZONE=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} | tee ${{ inputs.landingzone }}.log;
         echo 'SOLUTION_DEPLOYMENT_OUTPUT<<EOF' >> $GITHUB_ENV
         sed -n --expression='/Terraform will perform the following actions:/,$p' ${{ inputs.landingzone }}.log >> $GITHUB_ENV
         echo 'EOF' >> $GITHUB_ENV
@@ -100,7 +100,7 @@ runs:
         ENVIRONMENT: ${{ inputs.environment }}
         TFSTATE: ${{ inputs.tfstate }}
         SPKVURL: ${{ inputs.spkvurl }}
-        ADD_ON: ${{ inputs.add_on }}
+        SOLUTION: ${{ inputs.solution }}
       shell: bash
     - name: Update Pull Request
       uses: actions/github-script@v6
