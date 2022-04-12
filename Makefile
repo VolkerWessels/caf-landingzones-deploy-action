@@ -71,6 +71,9 @@ TF_INPUT=?=$(_TF_INPUT)### Causes terraform commands to behave as if the -input=
 _SPKVURL:=""
 SPKVURL?=$(_SPKVURL)### Impersonate keyvault URL. Defaults to none.
 
+_DISABLEVMEXTENSIONS:=""
+DISABLEVMEXTENSIONS?=$(_DISABLEVMEXTENSIONS)### Impersonate keyvault URL. Defaults to none.
+
 ifndef SOLUTION
 override SOLUTION = "caf_solution"
 endif
