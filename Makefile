@@ -130,7 +130,6 @@ _action:
 	_ACTION=$(_ACTION)
 	_SOLUTION=$(_SOLUTION)
 	_PLAN="$(_BASE_DIR)/$(PREFIX)-$${_SOLUTION////-}.tfplan"
-	_ADD_ON=$(_ADD_ON)
 	_LEVEL="level$(_LEVEL)"
 	_VARS=""
 	_IMPORT=$(_IMPORT)
@@ -138,7 +137,7 @@ _action:
 	_VAR_FOLDERS="$(_VAR_FOLDERS)"
 	_PARALLELISM="-parallelism $(PARALLELISM)"
 	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
-	if [ "$(_ADD_ON)"== "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
+	if [ "$(ADD_ON)"== "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
@@ -148,7 +147,7 @@ _action:
 	if [ -d "$(LANDINGZONES_DIR)/caf_solution/$(_SOLUTION)" ]; then _ADD_ON="caf_solution/$${_SOLUTION}"; fi
 	exit_code=0; \
 	/bin/bash -c \
-			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_ADD_ON -a $$_ACTION \
+			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$ADD_ON -a $$_ACTION \
 				$$_VAR_FOLDERS \
 				-level $$_LEVEL \
 				-tfstate $(TFSTATE).tfstate \
