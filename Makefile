@@ -142,7 +142,7 @@ _action:
 	_VAR_FOLDERS="$(_VAR_FOLDERS)"
 	_PARALLELISM="-parallelism $(PARALLELISM)"
 	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
-	if [ "$(SOLUTION)"== "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
+	if [ "$(SOLUTION)" == "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
@@ -174,9 +174,9 @@ tags: ## Generate tags.tfvars.json for LANDINGZONE. Usage example: make tags TAG
 	if [ -z "$$_TAGS" ]; then _TAGS="{ LANDINGZONE:, level: }"; fi
 	JSON=$$(echo -e "$$_TAGS" | \
 			yq -S --indent 2 \
-				--arg LANDINGZONE "$(_LANDINGZONE)" \
+				--arg landingzone "$(_LANDINGZONE)" \
 				--arg level "level$(_LEVEL)" \
-				'. + { LANDINGZONE: $$LANDINGZONE, level: $$level } | {tags: . }' - \
+				'. + { landingzone: $$LANDINGZONE, level: $$level } | {tags: . }' - \
 		)
 	echo -e "$$JSON" > $(TFVARS_PATH)/level$(_LEVEL)/$(_LANDINGZONE)/tags.tfvars.json
 	echo -e "${GREEN}Succesfully generated:\n\t$(TFVARS_PATH)/level$(_LEVEL)/$(_LANDINGZONE)/tags.tfvars.json${NC}"
@@ -222,9 +222,8 @@ list: _ACTION=list
 list: _LEVEL=$(LEVEL)
 list: _LANDINGZONE=$(LANDINGZONE)
 list: _ADDRESS=$(ADDRESS)
-showy: _SOLUTION=$(SOLUTION)"
+list: _SOLUTION=$(SOLUTION)"
 list: _action ## Run `terraform state list` using rover. Usage example: make show LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
-
 
 import: _ACTION=import
 import: _LEVEL=$(LEVEL)
