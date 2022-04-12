@@ -72,7 +72,7 @@ _SPKVURL:=""
 SPKVURL?=$(_SPKVURL)### Impersonate keyvault URL. Defaults to none.
 
 _DISABLEVMEXTENSIONS:=""
-DISABLEVMEXTENSIONS?=$(_DISABLEVMEXTENSIONS)### Impersonate keyvault URL. Defaults to none.
+DISABLEVMEXTENSIONS?=$(_DISABLEVMEXTENSIONS)### Remove vm and vmss extensions to speed up terraform plan. Defaults to no action.
 
 ifndef SOLUTION
 override SOLUTION = "caf_solution"
@@ -90,7 +90,6 @@ landingzones: ## Install caf-terraform-landingzones
 		git clone --branch $(TF_LZ_BRANCH) $(TF_LZ_GIT) $(LANDINGZONES_DIR); \
 		echo -e "${GREEN}Creating symlink for .devcontainer.$$(cd /tf/caf/ && ln -s $(LANDINGZONES_DIR)/.devcontainer .devcontainer)${NC}" ;\
 	fi
-	echo -e "${RED} variable $(DISABLEVMEXTENSIONS)${NC}"
 	if [ "$(DISABLEVMEXTENSIONS)" == "yes" ]; then echo -e "${GREEN}Removing vm extensions for speed${NC}" && rm $(LANDINGZONES_DIR)/caf_solution/*_extensions.tf -rf; fi
 	echo -e "${GREEN}Landingzones installed (version: $$(cd $(LANDINGZONES_DIR) && git branch --show-current))${NC}"
 	echo -e "${CYAN}#### ROVER IMAGE VERSION REQUIRED FOR LANDINGZONES: $$(cat $(LANDINGZONES_DIR)/.devcontainer/docker-compose.yml | yq .services.rover.image) ####${NC}"
