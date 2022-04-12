@@ -147,7 +147,7 @@ _action:
 	if [ "$(SPKVURL)" != "" ]; then echo -e "${GREEN} impersonating using $(SPKVURL)${NC}"; _PARALLELISM="$$_PARALLELISM --impersonate-sp-from-keyvault-url $(SPKVURL)"; fi
 	exit_code=0; \
 	/bin/bash -c \
-			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$SOLUTION -a $$_ACTION \
+			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/${SOLUTION} -a $$_ACTION \
 				$$_VAR_FOLDERS \
 				-level $$_LEVEL \
 				-tfstate $(TFSTATE).tfstate \
