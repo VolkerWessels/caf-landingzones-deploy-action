@@ -17,11 +17,8 @@ inputs:
   prefix:
     description: 'The prefix variable used in Azure naming'
     required: true
-  default_prefix:
-    description: 'Default prefix of the resource name'
-    required: false
   landingzone:
-    description: 'the segment (launchpad, solution or add-on) of a cloud environment to deploy'
+    description: 'the segment of a cloud environment to deploy'
     required: true
   level:
     description: 'Deploy level'
@@ -31,6 +28,18 @@ inputs:
     required: false
   tags:
     description: 'Json string of tags to import'
+    required: false
+  tfstate:
+    description: 'File name for tfstate'
+    required: false
+  spkvurl:
+    description: 'Keyvault url for service principal impersonation'
+    required: false
+  solution:
+    description: 'caf_landingzones logic to use'
+    required: false
+  disablevmextensions: 
+    description: 'disable vm and vmss extensions in the landingzone to speed up the run'
     required: false
 runs:
   using: "composite"
@@ -45,21 +54,19 @@ runs:
         echo "TF_DATA_DIR=${GITHUB_WORKSPACE}" >> $GITHUB_ENV;
         echo "TF_PLUGIN_CACHE_DIR=${GITHUB_WORKSPACE}/plugin-cache" >> $GITHUB_ENV;
       shell: bash
-    - uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
+    - name: Download artifacts if applicable
+      if: ${{ inputs.action == 'apply' }}
+      uses: actions/download-artifact@v2
       with:
-        if: ${{ inputs.action == 'apply' }}
-        step: |
-          uses: actions/download-artifact@v2
-          with:
-            name: terraform-${{ env.LANDINGZONE_NAME }}-plan
-            path: ${{ env.BASE_PATH }}/
+        name: terraform-${{ env.LANDINGZONE_NAME }}-plan
+        path: ${{ env.BASE_PATH }}/
     - name: Terraform Cache
       id: terraform-cache
       uses: actions/cache@v2
       with:
         path: |
           ${{ env.TF_PLUGIN_CACHE_DIR }}
-        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${ GITHUB_RUN_ID}
+        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ github.run_id }}
         restore-keys: |
           ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}
     - name: Install landingzones
@@ -69,6 +76,7 @@ runs:
       env:
         TF_LZ_GIT: https://github.com/VolkerWessels/caf-terraform-landingzones.git
         TF_LZ_BRANCH: ${{ inputs.branch }}
+        DISABLEVMEXTENSIONS: ${{ inputs.disablevmextensions }}
     - name: Azure login with service principal
       run: make login
       env:
@@ -76,31 +84,58 @@ runs:
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Create tags file with jq and move it to the solution folder
-      run: make tags TAGS=$( echo -n "${{ inputs.tags }}" | base64 -w 0) SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
+      run: make tags TAGS=$( echo -n "${{ inputs.tags }}" | base64 -w 0) LANDINGZONE=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Run ${{ inputs.action }}
       id: solution-deployment
-      run: make ${{ inputs.action }} SOLUTION=${{ inputs.landingzone }} LEVEL=${{ inputs.level }}
+      run: |
+        make ${{ inputs.action }} LANDINGZONE=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} | tee ${{ inputs.landingzone }}.log;
+        echo 'SOLUTION_DEPLOYMENT_OUTPUT<<EOF' >> $GITHUB_ENV
+        sed -n --expression='/Terraform will perform the following actions:/,$p' ${{ inputs.landingzone }}.log >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         PREFIX: ${{ inputs.prefix }}
-        DEFAULT_PREFIX: ${{ inputs.default_prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
+        TFSTATE: ${{ inputs.tfstate }}
+        SPKVURL: ${{ inputs.spkvurl }}
+        SOLUTION: ${{ inputs.solution }}
       shell: bash
+    - name: Update Pull Request
+      uses: actions/github-script@v6
+      if: ${{ inputs.action == 'plan'}}
+      with:
+        script: |
+          const output = `#### Name: \`${{ inputs.landingzone }}\`
+          #### Terraform Plan 📖\`${{ steps.solution-deployment.outcome }}\`
+          
+          <details><summary>Show Plan</summary>
+          
+          \`\`\`\n
+          ${process.env.SOLUTION_DEPLOYMENT_OUTPUT}
+          \`\`\`
+          
+          </details>
+          
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
     - name: Logout service principal
       run: make logout
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       shell: bash
     - name: Store tfplan
-      uses: VolkerWessels/conditional-composite-action@v1 # Workaround until possibility to use 'if:' option for action steps of composite actions
+      if: ${{ inputs.action == 'plan'}}
+      uses: actions/upload-artifact@v2
       with:
-        if: ${{ inputs.action == 'plan'}}
-        step: |
-          uses: actions/upload-artifact@v2
-          with:
-            name: terraform-${{ env.LANDINGZONE_NAME }}-plan
-            path: |
-              ${{ env.BASE_PATH }}/*.tfplan
-            if-no-files-found: error
-
+        name: terraform-${{ env.LANDINGZONE_NAME }}-plan
+        path: |
+          ${{ env.BASE_PATH }}/*.tfplan
+        if-no-files-found: error
+    
