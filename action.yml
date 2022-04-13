@@ -17,9 +17,6 @@ inputs:
   prefix:
     description: 'The prefix variable used in Azure naming'
     required: true
-  default_prefix:
-    description: 'Default prefix of the resource name'
-    required: false
   landingzone:
     description: 'the segment of a cloud environment to deploy'
     required: true
@@ -100,7 +97,6 @@ runs:
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
         PREFIX: ${{ inputs.prefix }}
-        DEFAULT_PREFIX: ${{ inputs.default_prefix }}
         ENVIRONMENT: ${{ inputs.environment }}
         TFSTATE: ${{ inputs.tfstate }}
         SPKVURL: ${{ inputs.spkvurl }}
