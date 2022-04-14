@@ -126,10 +126,10 @@ runs:
             repo: context.repo.repo,
             body: output
           })
-    - name: Logout service principal
-      run: make logout
-      working-directory: ${{ env.GITHUB_ACTION_PATH }}
-      shell: bash
+    # - name: Logout service principal
+    #   run: make logout
+    #   working-directory: ${{ env.GITHUB_ACTION_PATH }}
+    #   shell: bash
     - name: Store tfplan
       if: ${{ inputs.action == 'plan'}}
       uses: actions/upload-artifact@v2
