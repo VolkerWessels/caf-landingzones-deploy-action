@@ -102,30 +102,30 @@ runs:
         SPKVURL: ${{ inputs.spkvurl }}
         SOLUTION: ${{ inputs.solution }}
       shell: bash
-    - name: Update Pull Request
-      uses: actions/github-script@v6
-      if: ${{ inputs.action == 'plan'}}
-      with:
-        script: |
-          const output = `#### Name: \`${{ inputs.landingzone }}\`
-          #### Terraform Plan 📖\`${{ steps.solution-deployment.outcome }}\`
+    # - name: Update Pull Request
+    #   uses: actions/github-script@v6
+    #   if: ${{ inputs.action == 'plan'}}
+    #   with:
+    #     script: |
+    #       const output = `#### Name: \`${{ inputs.landingzone }}\`
+    #       #### Terraform Plan 📖\`${{ steps.solution-deployment.outcome }}\`
           
-          <details><summary>Show Plan</summary>
+    #       <details><summary>Show Plan</summary>
           
-          \`\`\`\n
-          ${process.env.SOLUTION_DEPLOYMENT_OUTPUT}
-          \`\`\`
+    #       \`\`\`\n
+    #       ${process.env.SOLUTION_DEPLOYMENT_OUTPUT}
+    #       \`\`\`
           
-          </details>
+    #       </details>
           
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+    #       *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
           
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output
-          })
+    #       github.rest.issues.createComment({
+    #         issue_number: context.issue.number,
+    #         owner: context.repo.owner,
+    #         repo: context.repo.repo,
+    #         body: output
+    #       })
     - name: Logout service principal
       run: make logout
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
