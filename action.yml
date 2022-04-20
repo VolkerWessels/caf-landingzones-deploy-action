@@ -92,7 +92,7 @@ runs:
       run: |
         make ${{ inputs.action }} LANDINGZONE=${{ inputs.landingzone }} LEVEL=${{ inputs.level }};
         echo 'SOLUTION_DEPLOYMENT_OUTPUT<<EOF' >> $GITHUB_ENV
-        terraform show ${{ env.GITHUB_ACTION_PATH }}/${{ inputs.prefix }}-${{ env.LANDINGZONE_NAME }}.tfplan -no-color |sed -n --expression='/Terraform will perform the following actions:/,$p' |sed -n 1,5000p >> $GITHUB_ENV
+        terraform show ${{ inputs.config_dir }}/${{ inputs.prefix }}-${{ env.LANDINGZONE_NAME }}.tfplan -no-color |sed -n --expression='/Terraform will perform the following actions:/,$p' |sed -n 1,5000p >> $GITHUB_ENV
         echo 'EOF' >> $GITHUB_ENV
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
       env:
