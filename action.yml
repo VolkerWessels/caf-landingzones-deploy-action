@@ -65,10 +65,10 @@ runs:
       uses: actions/cache@v2
       with:
         path: |
-          ${GITHUB_WORKSPACE}/.terraform
+          ${GITHUB_WORKSPACE}
         key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ github.run_id }}
-        restore-keys: |
-          ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ github.run_id }}
+        # restore-keys: |
+        #   ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ github.run_id }}
     - name: Install landingzones
       run: make landingzones
       shell: bash
