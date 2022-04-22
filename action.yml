@@ -66,9 +66,9 @@ runs:
       with:
         path: |
           ${GITHUB_WORKSPACE}/.terraform
-        key: ${{ runner.os }}-terraform-${{ hashFiles('.terraform/**') }}-${{ inputs.prefix }}-${{ inputs.environment }}
+        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('**') }}
         restore-keys: |
-          ${{ runner.os }}-terraform-${{ hashFiles('.terraform/**') }}-${{ inputs.prefix }}-${{ inputs.environment }}
+          ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ hashFiles('**') }}
     - name: Install landingzones
       run: make landingzones
       shell: bash
