@@ -65,10 +65,10 @@ runs:
       uses: actions/cache@v2
       with:
         path: |
-          ${{ env.TF_PLUGIN_CACHE_DIR }}
-        key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}-${{ inputs.prefix }}-${{ inputs.environment }}-${{ github.run_id }}
+          ${GITHUB_WORKSPACE}/.terraform
+        key: ${{ runner.os }}-terraform-${{ hashFiles('.terraform/**') }}-${{ inputs.prefix }}-${{ inputs.environment }}
         restore-keys: |
-          ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}-${{ inputs.prefix }}-${{ inputs.environment }}
+          ${{ runner.os }}-terraform-${{ hashFiles('.terraform/**') }}-${{ inputs.prefix }}-${{ inputs.environment }}
     - name: Install landingzones
       run: make landingzones
       shell: bash
