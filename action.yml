@@ -60,15 +60,15 @@ runs:
       with:
         name: terraform-${{ env.LANDINGZONE_NAME }}-plan
         path: ${{ env.BASE_PATH }}/
-    - name: Terraform Cache
-      id: terraform-cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          ${{ env.TF_PLUGIN_CACHE_DIR }}
-        key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ github.run_id }}
-        # restore-keys: |
-        #   ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ github.run_id }}
+    # - name: Terraform Cache
+    #   id: terraform-cache
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: |
+    #       ${{ env.TF_PLUGIN_CACHE_DIR }}
+    #     key: ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ github.run_id }}
+    #     # restore-keys: |
+    #     #   ${{ runner.os }}-terraform-${{ inputs.prefix }}-${{ inputs.environment }}-${{ github.run_id }}
     - name: Install landingzones
       run: make landingzones
       shell: bash
