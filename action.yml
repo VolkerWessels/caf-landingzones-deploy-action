@@ -102,13 +102,9 @@ runs:
         SPKVURL: ${{ inputs.spkvurl }}
         SOLUTION: ${{ inputs.solution }}
       shell: bash
-    - name: View context attributes
-      uses: actions/github-script@v6
-      with:
-        script: console.log(context)
     - name: Update Pull Request
       uses: actions/github-script@v6
-      if: ${{ inputs.action == 'plan'}}
+      if: ${{ inputs.action == 'plan' && github.event_name == 'pull_request'}}      
       with:
         script: |
           const output = `#### Name: \`${{ inputs.landingzone }}\`
@@ -130,6 +126,7 @@ runs:
             repo: context.repo.repo,
             body: output
           })
+          
     - name: Logout service principal
       run: make logout
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
