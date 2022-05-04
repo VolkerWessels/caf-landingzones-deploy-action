@@ -92,6 +92,7 @@ runs:
       run: |
         make ${{ inputs.action }} LANDINGZONE=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} | tee deploy.log;
         numberoflines=$(grep -c "^.*$" deploy.log)
+        echo $numberoflines
         if [ "$numberoflines" -gt 5000 ]; then 
           echo "Plan over 5000 lines, check the action" >> $GITHUB_ENV
         else
