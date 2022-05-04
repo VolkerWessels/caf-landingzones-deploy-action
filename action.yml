@@ -129,8 +129,7 @@ runs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             body: output
-          })
-          
+          })     
     - name: Logout service principal
       run: make logout
       working-directory: ${{ env.GITHUB_ACTION_PATH }}
