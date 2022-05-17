@@ -96,6 +96,7 @@ landingzones: ## Install caf-terraform-landingzones
 
 login: ## Login to azure using a service principal
 	az config set extension.use_dynamic_install=yes_without_prompt;
+	az extension add --name resource-graph
 	@echo -e "${LIGHTGREEN}Azure login using service principal.\n\nAvailable subscriptions:${NC}"
 	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p=${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID} --query "[?state == 'Enabled'].name" -o table;
 	if [ -v ARM_SUBSCRIPTION_ID ]; then \
