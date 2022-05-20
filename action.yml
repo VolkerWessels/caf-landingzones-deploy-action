@@ -41,6 +41,9 @@ inputs:
   disablevmextensions: 
     description: 'disable vm and vmss extensions in the landingzone to speed up the run'
     required: false
+  workspace: 
+    description: 'tf_var_WORKSPACE'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -106,6 +109,7 @@ runs:
         TFSTATE: ${{ inputs.tfstate }}
         SPKVURL: ${{ inputs.spkvurl }}
         SOLUTION: ${{ inputs.solution }}
+        TF_VAR_WORKSPACE: ${{ inputs.workspace }}
       shell: bash
     - name: Update Pull Request
       uses: actions/github-script@v6
