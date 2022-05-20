@@ -95,8 +95,8 @@ landingzones: ## Install caf-terraform-landingzones
 	echo -e "${CYAN}#### ROVER IMAGE VERSION REQUIRED FOR LANDINGZONES: $$(cat $(LANDINGZONES_DIR)/.devcontainer/docker-compose.yml | yq .services.rover.image) ####${NC}"
 
 login: ## Login to azure using a service principal
-	az extension list-available --output table --debug
-	az config set extension.use_dynamic_install=yes_without_prompt;
+	#az extension list-available --output table --debug
+	#az config set extension.use_dynamic_install=yes_without_prompt;
 	az extension add --name resource-graph
 	@echo -e "${LIGHTGREEN}Azure login using service principal.\n\nAvailable subscriptions:${NC}"
 	az login --service-principal --allow-no-subscriptions -u ${ARM_CLIENT_ID} -p=${ARM_CLIENT_SECRET} --tenant ${ARM_TENANT_ID} --query "[?state == 'Enabled'].name" -o table;
