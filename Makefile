@@ -82,6 +82,10 @@ ifndef TFSTATE
 override TFSTATE = $(shell basename $(_LANDINGZONE))
 endif
 
+ifndef TF_VAR_WORKSPACE
+override TF_VAR_WORKSPACE = "tfstate"
+endif
+
 landingzones: ## Install caf-terraform-landingzones
 	@echo -e "${LIGHTGRAY}TFVARS_PATH:		$(TFVARS_PATH)${NC}"
 	@echo -e "${LIGHTGRAY}LANDINGZONES_DIR:	$(LANDINGZONES_DIR)${NC}"
