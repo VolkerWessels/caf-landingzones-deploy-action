@@ -109,7 +109,7 @@ runs:
         TFSTATE: ${{ inputs.tfstate }}
         SPKVURL: ${{ inputs.spkvurl }}
         SOLUTION: ${{ inputs.solution }}
-        TF_VAR_WORKSPACE: ${{ inputs.workspace }}
+        TF_VAR_workspace: ${{ inputs.workspace }}
       shell: bash
     - name: Update Pull Request
       uses: actions/github-script@v6
