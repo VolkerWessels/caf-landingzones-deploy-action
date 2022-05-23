@@ -221,22 +221,22 @@ apply: _action ## Run `terraform apply` using rover. Usage example: make apply L
 
 destroy: _ACTION=destroy
 destroy: _LEVEL=$(LEVEL)
-destroy: _LANDINGZONE=$(LANDINGZONE)"
-destroy: _SOLUTION=$(SOLUTION)"
+destroy: _LANDINGZONE=$(LANDINGZONE)
+destroy: _SOLUTION=$(SOLUTION)
 destroy: _action ## Run `terraform destroy` using rover. Usage example: make destroy LANDINGZONE=application LEVEL=4
 
 show: _ACTION=show
 show: _LEVEL=$(LEVEL)
 show: _LANDINGZONE=$(LANDINGZONE)
 show: _ADDRESS=$(ADDRESS)
-show: _SOLUTION=$(SOLUTION)"
+show: _SOLUTION=$(SOLUTION)
 show: _action ## Run `terraform state show` using rover. Usage example: make show LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
 
 list: _ACTION=list
 list: _LEVEL=$(LEVEL)
 list: _LANDINGZONE=$(LANDINGZONE)
 list: _ADDRESS=$(ADDRESS)
-list: _SOLUTION=$(SOLUTION)"
+list: _SOLUTION=$(SOLUTION)
 list: _action ## Run `terraform state list` using rover. Usage example: make show LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
 
 
@@ -245,5 +245,5 @@ import: _LEVEL=$(LEVEL)
 import: _LANDINGZONE=$(LANDINGZONE)
 import: _IMPORT=$(IMPORT)
 import: _ADDRESS=$(ADDRESS)
-import: _SOLUTION=$(SOLUTION)"
+import: _SOLUTION=$(SOLUTION)
 import: _action ## Run `terraform import` using rover. Usage example: make import LANDINGZONE=launchpad LEVEL=0 IMPORT=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription ADDRESS=/providers/Microsoft.Subscription/aliases/connectivity
