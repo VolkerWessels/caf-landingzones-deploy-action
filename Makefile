@@ -158,7 +158,7 @@ _action:
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
 	if [ "$(_ACTION)" == "show" ] || [ "$(_ACTION)" == "list" ]; then _ACTION="state\ $(_ACTION)" _VARS="$(_ADDRESS)" _VAR_FOLDERS="" _PARALLELISM=""; fi
-	if [ "$(_ACTION)" == "destroy" ]; then _VAR_FOLDERS="" && echo -e "${RED} Destroying landingzone resources ${NC}"; fi
+	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} Destroying landingzone resources ${NC}" && /bin/bash -c "/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_SOLUTION -a $$_ACTION" && exit; fi
 	if [ "$(SPKVURL)" != "" ]; then echo -e "${GREEN} impersonating using $(SPKVURL)${NC}"; _PARALLELISM="$$_PARALLELISM --impersonate-sp-from-keyvault-url $(SPKVURL)"; fi
 	exit_code=0; \
 	/bin/bash -c \
