@@ -96,8 +96,8 @@ runs:
         make ${{ inputs.action }} LANDINGZONE=${{ inputs.landingzone }} LEVEL=${{ inputs.level }} | tee deploy.log;
         echo 'SOLUTION_DEPLOYMENT_OUTPUT<<EOF' >> $GITHUB_ENV
         numberoflines=$(grep -c "^.*$" deploy.log) 
-        if [ "$numberoflines" -gt 5000 ]; then 
-          echo "Plan over 5000 lines, check the action" >> $GITHUB_ENV
+        if [ "$numberoflines" -gt 1000 ]; then 
+          echo "Plan over 1000 lines, check the action" >> $GITHUB_ENV
         else
           sed -n --expression='/Terraform will perform the following actions:/,$p' deploy.log >> $GITHUB_ENV
         fi
