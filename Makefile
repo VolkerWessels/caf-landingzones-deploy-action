@@ -169,6 +169,7 @@ _action:
 				--workspace $$_WORKSPACE \
 				$$_PARALLELISM \
 				-env $(ENVIRONMENT) \
+				-target_subscription $(ARM_SUBSCRIPTION_ID) \
 				-no-color \
 				$$_VARS" || exit_code="$$?" ; \
 				if [ "$$exit_code" -eq 2 ]; \
