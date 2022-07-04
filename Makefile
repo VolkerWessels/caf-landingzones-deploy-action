@@ -234,6 +234,8 @@ show: _LEVEL=$(LEVEL)
 show: _LANDINGZONE=$(LANDINGZONE)
 show: _ADDRESS=$(ADDRESS)
 show: _SOLUTION=$(SOLUTION)
+show: _WORKSPACE=$(TF_VAR_workspace)
+show: _SUBSCRIPTION=$(ARM_SUBSCRIPTION_ID)
 show: _action ## Run `terraform state show` using rover. Usage example: make show LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
 
 list: _ACTION=list
@@ -241,6 +243,8 @@ list: _LEVEL=$(LEVEL)
 list: _LANDINGZONE=$(LANDINGZONE)
 list: _ADDRESS=$(ADDRESS)
 list: _SOLUTION=$(SOLUTION)
+list: _WORKSPACE=$(TF_VAR_workspace)
+list: _SUBSCRIPTION=$(ARM_SUBSCRIPTION_ID)
 list: _action ## Run `terraform state list` using rover. Usage example: make list LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
 
 rm: _ACTION=rm
@@ -248,6 +252,8 @@ rm: _LEVEL=$(LEVEL)
 rm: _LANDINGZONE=$(LANDINGZONE)
 rm: _ADDRESS=$(ADDRESS)
 rm: _SOLUTION=$(SOLUTION)
+rm: _WORKSPACE=$(TF_VAR_workspace)
+rm: _SUBSCRIPTION=$(ARM_SUBSCRIPTION_ID)
 rm: _action ## Run `terraform state rm` using rover. Usage example: make rm LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
 
 import: _ACTION=import
