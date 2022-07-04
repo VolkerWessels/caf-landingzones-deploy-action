@@ -6,7 +6,7 @@ inputs:
     default: vw-combined
     required: false
   action:
-    description: 'CAF terraform action to run. One of (validate, init, plan, apply, show or destroy)'
+    description: 'CAF terraform action to run. One of (validate, init, plan, apply, show, list, rm or destroy)'
     required: true
   config_dir:
     description: 'A directory in `github.workspace` containing config (*.tfvar) files.'

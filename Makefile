@@ -157,7 +157,7 @@ _action:
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
-	if [ "$(_ACTION)" == "show" ] || [ "$(_ACTION)" == "list" ]; then _ACTION="state\ $(_ACTION)" _VARS="$(_ADDRESS)" _VAR_FOLDERS="" _PARALLELISM=""; fi
+	if [ "$(_ACTION)" == "show" ] || [ "$(_ACTION)" == "list" ] || [ "$(_ACTION)" == "rm" ] ; then _ACTION="state\ $(_ACTION)" _VARS="$(_ADDRESS)" _VAR_FOLDERS="" _PARALLELISM=""; fi
 	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} Destroying landingzone resources ${NC}" && /bin/bash -c "/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_SOLUTION -a $$_ACTION --workspace $$_WORKSPACE" && exit; fi
 	if [ "$(SPKVURL)" != "" ]; then echo -e "${GREEN} impersonating using $(SPKVURL)${NC}"; _PARALLELISM="$$_PARALLELISM --impersonate-sp-from-keyvault-url $(SPKVURL)"; fi
 	exit_code=0; \
@@ -237,8 +237,14 @@ list: _LEVEL=$(LEVEL)
 list: _LANDINGZONE=$(LANDINGZONE)
 list: _ADDRESS=$(ADDRESS)
 list: _SOLUTION=$(SOLUTION)
-list: _action ## Run `terraform state list` using rover. Usage example: make show LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
+list: _action ## Run `terraform state list` using rover. Usage example: make list LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
 
+rm: _ACTION=rm
+rm: _LEVEL=$(LEVEL)
+rm: _LANDINGZONE=$(LANDINGZONE)
+rm: _ADDRESS=$(ADDRESS)
+rm: _SOLUTION=$(SOLUTION)
+rm: _action ## Run `terraform state rm` using rover. Usage example: make rm LANDINGZONE=application LEVEL=4 ADDRESS=module.launchpad.module.subscriptions[\\\\\\\"connectivity\\\\\\\"].azurerm_subscription.sub[0]
 
 import: _ACTION=import
 import: _LEVEL=$(LEVEL)
