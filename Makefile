@@ -167,11 +167,11 @@ _action:
 				$$_VAR_FOLDERS \
 				-level $$_LEVEL \
 				-tfstate $(TFSTATE).tfstate \
+				-no-color \
 				--workspace $$_WORKSPACE \
 				$$_PARALLELISM \
 				-env $(ENVIRONMENT) \
 				-target_subscription $$_SUBSCRIPTION \
-				-no-color \
 				$$_VARS" || exit_code="$$?" ; \
 				if [ "$$exit_code" -eq 2 ]; \
 					then echo -e "${GREEN}Plan succeeded with changes${NC}" && true; \
