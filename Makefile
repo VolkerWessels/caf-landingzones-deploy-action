@@ -162,7 +162,6 @@ _action:
 	if [ "$(_ACTION)" == "destroy" ]; then echo -e "${RED} Destroying landingzone resources ${NC}" && /bin/bash -c "/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_SOLUTION -a $$_ACTION --workspace $$_WORKSPACE" && exit; fi
 	if [ "$(SPKVURL)" != "" ]; then echo -e "${GREEN} impersonating using $(SPKVURL)${NC}"; _PARALLELISM="$$_PARALLELISM --impersonate-sp-from-keyvault-url $(SPKVURL)"; fi
 	exit_code=0; \
-	/bin/bash -c "ls $(TFSTATE).tfstate"
 	/bin/bash -c \
 			"/tf/rover/rover.sh -lz $(LANDINGZONES_DIR)/$$_SOLUTION -a $$_ACTION \
 				$$_VAR_FOLDERS \
