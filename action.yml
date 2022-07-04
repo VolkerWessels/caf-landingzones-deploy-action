@@ -1,6 +1,9 @@
 name: 'CAF landing zone deployment'
 description: 'VolkerWessels biased CAF landing zone deployment'
 inputs:
+  address:
+    description: 'The address to use with rover state show, list or rm'
+    required: false
   branch:
     description: 'The branch of the caf-terraform-landingzones repository'
     default: vw-combined
@@ -110,6 +113,7 @@ runs:
         SPKVURL: ${{ inputs.spkvurl }}
         SOLUTION: ${{ inputs.solution }}
         TF_VAR_workspace: ${{ inputs.workspace }}
+        ADDRESS: ${{ inputs.address }}
       shell: bash
     - name: Update Pull Request
       uses: actions/github-script@v6
