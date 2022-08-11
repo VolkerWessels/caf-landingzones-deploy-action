@@ -19,7 +19,7 @@ inputs:
     required: true
   prefix:
     description: 'The prefix variable used in Azure naming'
-    required: true
+    required: false
   landingzone:
     description: 'the segment of a cloud environment to deploy'
     required: true
