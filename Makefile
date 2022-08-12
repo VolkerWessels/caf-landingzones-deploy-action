@@ -152,7 +152,6 @@ _action:
 	_PARALLELISM="-parallelism $(PARALLELISM)"
 	_SOLUTION="$(_SOLUTION)"
 	_WORKSPACE="$(_WORKSPACE)"
-	_SUBSCRIPTION="$(_SUBSCRIPTION)"
 	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
 	if [ "$(_SOLUTION)" == "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
@@ -212,7 +211,6 @@ plan: _LEVEL=$(LEVEL)
 plan: _LANDINGZONE=$(LANDINGZONE)
 plan: _SOLUTION=$(SOLUTION)
 plan: _WORKSPACE=$(TF_VAR_workspace)
-plan: _SUBSCRIPTION=$(ARM_SUBSCRIPTION_ID)
 plan: _action ## Run `terraform plan` using rover. Usage example: make plan LANDINGZONE=add-ons/gitops LEVEL=1
 
 apply: _ACTION=apply
@@ -220,7 +218,6 @@ apply: _LEVEL=$(LEVEL)
 apply: _LANDINGZONE=$(LANDINGZONE)
 apply: _SOLUTION=$(SOLUTION)
 apply: _WORKSPACE=$(TF_VAR_workspace)
-apply: _SUBSCRIPTION=$(ARM_SUBSCRIPTION_ID)
 apply: _action ## Run `terraform apply` using rover. Usage example: make apply LANDINGZONE=networking LEVEL=2
 
 destroy: _ACTION=destroy
