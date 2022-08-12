@@ -122,6 +122,7 @@ logout: ## Logout service principal
 	az logout || true
     # Cleanup any service principal session
 	unset ARM_TENANT_ID
+	unset ARM_SUBSCRIPTION_ID
 	unset ARM_SUBSCRIPTION_NAME
 	unset ARM_CLIENT_ID
 	unset ARM_CLIENT_SECRET
