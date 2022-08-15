@@ -39,7 +39,6 @@ info: ## Information about ENVIRONMENT variables and how to use them.
 	@awk  'BEGIN { FS = "\\s?(\\?=|:=).*###"} /^[a-zA-Z\._-]+.*?###.* / {printf "\033[33m%-28s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 PARALLELISM?='30'### Limit the number of concurrent operation as Terraform walks the graph. Defaults to 30.
-RANDOM_LENGTH?='5'### Random string length for azure resource naming. Defaults to 5
 
 _TFVARS_PATH:="$(shell pwd)/.github/tests/config"
 TFVARS_PATH?=$(_TFVARS_PATH)
@@ -153,7 +152,7 @@ _action:
 	_SOLUTION="$(_SOLUTION)"
 	_WORKSPACE="$(_WORKSPACE)"
 	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
-	if [ "$(_SOLUTION)" == "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
+	if [ "$(_SOLUTION)" == "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var prefix=$(PREFIX)'"; fi
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
