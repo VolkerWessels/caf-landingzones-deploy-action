@@ -37,7 +37,7 @@ Check for the version to use in the output of the job:
 Use below example to run a single action: 
 ```yaml
 steps:
-- uses: actions/checkout@v2
+- uses: actions/checkout@v3
 - uses:  VolkerWessels/caf-landingzones-deploy-action@v1
   with:
     action: validate
@@ -61,7 +61,7 @@ strategy:
     action: ["validate", "plan", "apply"]
     
 steps:
-- uses: actions/checkout@v2  
+- uses: actions/checkout@v3  
 - uses:  VolkerWessels/caf-landingzones-deploy-action@v1
   name: deploy
   with:
@@ -112,7 +112,7 @@ jobs:
         action: ["validate", "plan", "apply"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: VolkerWessels/caf-landingzones-deploy-action@v1
         name: deploy
         with:

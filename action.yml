@@ -145,7 +145,7 @@ runs:
       shell: bash
     - name: Store tfplan
       if: ${{ inputs.action == 'plan'}}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: terraform-${{ env.LANDINGZONE_NAME }}-plan
         path: |

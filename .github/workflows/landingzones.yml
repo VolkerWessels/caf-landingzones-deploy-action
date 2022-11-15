@@ -50,7 +50,7 @@ jobs:
         action: ["plan", "apply"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./
         name: Run '${{ matrix.action }}' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
         with:
@@ -83,7 +83,7 @@ jobs:
           - { level: "0", landingzone: "launchpad", purge: true}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Run 'destroy' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
         uses: VolkerWessels/caf-landingzones-destroy-action@v1
         with:
