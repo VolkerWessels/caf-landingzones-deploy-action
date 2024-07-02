@@ -37,7 +37,7 @@ jobs:
     environment: 'non-prd' ## For secrets
 
     container:
-      image: aztfmod/rover:1.0.7-2111.0103
+      image: aztfmod/rover:1.4.6-2306.1405
       options: --user 0
 
     strategy:
@@ -50,7 +50,7 @@ jobs:
         action: ["plan", "apply"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ./
         name: Run '${{ matrix.action }}' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
         with:
@@ -71,7 +71,7 @@ jobs:
     continue-on-error: true
 
     container:
-      image: aztfmod/rover:1.0.7-2109.2410
+      image: aztfmod/rover:1.4.6-2306.1405
       options: --user 0
 
     strategy:
@@ -83,7 +83,7 @@ jobs:
           - { level: "0", landingzone: "launchpad", purge: true}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Run 'destroy' on '${{ matrix.landingzones.landingzone }} ( level${{ matrix.landingzones.level }} )'
         uses: VolkerWessels/caf-landingzones-destroy-action@v1
         with:
