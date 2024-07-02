@@ -62,7 +62,7 @@ runs:
       shell: bash
     - name: Download artifacts if applicable
       if: ${{ inputs.action == 'apply' }}
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: terraform-${{ env.LANDINGZONE_NAME }}-plan
         path: ${{ env.BASE_PATH }}/
@@ -116,7 +116,7 @@ runs:
         ADDRESS: ${{ inputs.address }}
       shell: bash
     - name: Update Pull Request
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       if: ${{ inputs.action == 'plan' && github.event_name == 'pull_request'}}      
       with:
         script: |
@@ -145,7 +145,7 @@ runs:
       shell: bash
     - name: Store tfplan
       if: ${{ inputs.action == 'plan'}}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: terraform-${{ env.LANDINGZONE_NAME }}-plan
         path: |
