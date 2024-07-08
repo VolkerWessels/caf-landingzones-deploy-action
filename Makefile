@@ -39,7 +39,6 @@ info: ## Information about ENVIRONMENT variables and how to use them.
 	@awk  'BEGIN { FS = "\\s?(\\?=|:=).*###"} /^[a-zA-Z\._-]+.*?###.* / {printf "\033[33m%-28s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 PARALLELISM?='30'### Limit the number of concurrent operation as Terraform walks the graph. Defaults to 30.
-RANDOM_LENGTH?='5'### Random string length for azure resource naming. Defaults to 5
 
 _TFVARS_PATH:="$(shell pwd)/.github/tests/config"
 TFVARS_PATH?=$(_TFVARS_PATH)
@@ -152,9 +151,8 @@ _action:
 	_PARALLELISM="-parallelism $(PARALLELISM)"
 	_SOLUTION="$(_SOLUTION)"
 	_WORKSPACE="$(_WORKSPACE)"
-	_SUBSCRIPTION="$(_SUBSCRIPTION)"
 	if [ "$(_LEVEL)" == "0" ]; then _LEVEL="level0 -launchpad"; fi
-	if [ "$(_SOLUTION)" == "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var random_length=$(RANDOM_LENGTH)' '-var prefix=$(PREFIX)'"; fi
+	if [ "$(_SOLUTION)" == "caf_launchpad" ]; then _LEVEL="$$_LEVEL" && _VARS="'-var prefix=$(PREFIX)'"; fi
 	if [ ! "$(_ACTION)" == "validate" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "plan" ] || [ "$(_ACTION)" == "apply" ]; then _ACTION="$(_ACTION) --plan $$_PLAN"; fi
 	if [ "$(_ACTION)" == "import" ]; then _ACTION="$(_ACTION)" _VARS="$(_IMPORT) $(_ADDRESS)"; fi
@@ -167,11 +165,9 @@ _action:
 				$$_VAR_FOLDERS \
 				-level $$_LEVEL \
 				-tfstate $(TFSTATE).tfstate \
-				-no-color \
 				--workspace $$_WORKSPACE \
 				$$_PARALLELISM \
 				-env $(ENVIRONMENT) \
-				-target_subscription $$_SUBSCRIPTION \
 				$$_VARS" || exit_code="$$?" ; \
 				if [ "$$exit_code" -eq 2 ]; \
 					then echo -e "${GREEN}Plan succeeded with changes${NC}" && true; \
@@ -212,7 +208,6 @@ plan: _LEVEL=$(LEVEL)
 plan: _LANDINGZONE=$(LANDINGZONE)
 plan: _SOLUTION=$(SOLUTION)
 plan: _WORKSPACE=$(TF_VAR_workspace)
-plan: _SUBSCRIPTION=$(ARM_SUBSCRIPTION_ID)
 plan: _action ## Run `terraform plan` using rover. Usage example: make plan LANDINGZONE=add-ons/gitops LEVEL=1
 
 apply: _ACTION=apply
@@ -220,7 +215,6 @@ apply: _LEVEL=$(LEVEL)
 apply: _LANDINGZONE=$(LANDINGZONE)
 apply: _SOLUTION=$(SOLUTION)
 apply: _WORKSPACE=$(TF_VAR_workspace)
-apply: _SUBSCRIPTION=$(ARM_SUBSCRIPTION_ID)
 apply: _action ## Run `terraform apply` using rover. Usage example: make apply LANDINGZONE=networking LEVEL=2
 
 destroy: _ACTION=destroy
